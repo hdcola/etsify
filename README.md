@@ -8,6 +8,14 @@
 pnpm install
 ```
 
+### .env
+
+Create a `.env` file in the root of the project and add the following:
+
+```env
+VITE_STRIPE_PUBLIC_KEY=YOUR_STRIPE_PUBLIC_KEY
+```
+
 ### Run the development server
 
 ```bash
