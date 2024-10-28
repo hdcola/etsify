@@ -11,7 +11,6 @@ function App() {
         <Container>
             <QueryClientProvider client={queryClient}>
                 <Router>
-                    <Navbar />
                     <Routes>
                         <Route path="/" element={<Home />} />
                     </Routes>
