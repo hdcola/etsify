@@ -5,11 +5,7 @@ import {
     useElements,
 } from '@stripe/react-stripe-js';
 
-interface CheckoutFormProps {
-    dpmCheckerLink: string;
-}
-
-export const CheckoutForm = ({ dpmCheckerLink }: CheckoutFormProps) => {
+export const CheckoutForm = () => {
     const stripe = useStripe();
     const elements = useElements();
 
@@ -75,21 +71,6 @@ export const CheckoutForm = ({ dpmCheckerLink }: CheckoutFormProps) => {
                 {/* Show any error or success messages */}
                 {message && <div id="payment-message">{message}</div>}
             </form>
-            {/* [DEV]: Display dynamic payment methods annotation and integration checker */}
-            <div id="dpm-annotation">
-                <p>
-                    Payment methods are dynamically displayed based on customer
-                    location, order amount, and currency.&nbsp;
-                    <a
-                        href={dpmCheckerLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        id="dpm-integration-checker"
-                    >
-                        Preview payment methods by transaction
-                    </a>
-                </p>
-            </div>
         </>
     );
 };

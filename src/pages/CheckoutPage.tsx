@@ -10,9 +10,13 @@ interface CheckoutPageProps {
 export const CheckoutPage: React.FC<CheckoutPageProps> = ({
     stripePromise,
 }) => {
-    const { data, isLoading, error } = useStripeClientSecret();
+    const items = [
+        { id: 'M4 MacBook Pro', amount: 20000 },
+        { id: 'M1 MacBook Air', amount: 10000 },
+    ];
+
+    const { data, isLoading, error } = useStripeClientSecret(items);
     const clientSecret = data?.clientSecret;
-    const dpmCheckerLink = data?.dpmCheckerLink;
 
     const appearance: { theme: 'stripe' | 'night' | 'flat' | undefined } = {
         theme: 'stripe',
@@ -23,13 +27,21 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
     if (error) return <p>Error: {error.message}</p>;
 
     return (
-        clientSecret && (
-            <Elements
-                options={{ clientSecret, appearance, loader }}
-                stripe={stripePromise}
-            >
-                <CheckoutForm dpmCheckerLink={dpmCheckerLink} />
-            </Elements>
-        )
+        <>
+            {items.map((item) => (
+                <div key={item.id}>
+                    <h2>{item.id}</h2>
+                    <p>{item.amount / 100}</p>
+                </div>
+            ))}
+            {clientSecret && (
+                <Elements
+                    options={{ clientSecret, appearance, loader }}
+                    stripe={stripePromise}
+                >
+                    <CheckoutForm />
+                </Elements>
+            )}
+        </>
     );
 };

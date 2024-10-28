@@ -1,15 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-
-const fetchClientSecret = async () => {
+export const fetchStripeClientSecret = async (items: { id: string, amount: number }[]) => {
     try {
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/create-payment-intent`, {
-            items: [{ id: 'xl-tshirt', amount: 1000 }],
+            items: items,
         }, {
             headers: { 'Content-Type': 'application/json' },
         });
-
 
         return response.data;
     } catch (error) {
@@ -23,6 +21,6 @@ export interface clientSecretData {
     dpmCheckerLink: string;
 }
 
-export const useStripeClientSecret = () => {
-    return useQuery({ queryKey: ['clientSecret'], queryFn: fetchClientSecret });
+export const useStripeClientSecret = (items: { id: string, amount: number }[]) => {
+    return useQuery({ queryKey: ['clientSecret', items], queryFn: () => fetchStripeClientSecret(items) });
 };
