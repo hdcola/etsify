@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { Stack, TextField, Button } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -9,6 +10,7 @@ export const Login = () => {
     const [formValues, setFormValues] = useState(initialValues);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -18,13 +20,19 @@ export const Login = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formValues.email)) {
+            setError('Please provide a valid email.');
+            return;
+        }
+
         try {
-            const response = await axios.post(
-                `${apiUrl}/users/login`,
-                formValues
-            );
-            console.log('response.data: ', response.data);
+            await axios.post(`${apiUrl}/users/login`, formValues);
             setSuccess('Login successful!');
+            setTimeout(() => {
+                setSuccess('');
+                navigate('/');
+            }, 1000);
             setError(null);
         } catch (err) {
             console.log('catched error: ', err);

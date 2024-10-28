@@ -1,14 +1,22 @@
-import React, { useState } from "react";
-import Typography from "@mui/material/Typography";
-import { Stack, TextField, Button } from "@mui/material";
-import axios from "axios";
+import React, { useState } from 'react';
+import Typography from '@mui/material/Typography';
+import { Stack, TextField, Button } from '@mui/material';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export const Register = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
-    const initialValues = { username: "", full_name: "", email: "", password: "", password2: "" };
+    const initialValues = {
+        username: '',
+        full_name: '',
+        email: '',
+        password: '',
+        password2: '',
+    };
     const [formValues, setFormValues] = useState(initialValues);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -18,6 +26,12 @@ export const Register = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formValues.email)) {
+            setError('Please provide a valid email.');
+            return;
+        }
+
         if (formValues.password !== formValues.password2) {
             setError("Passwords do not match.");
             setSuccess(null);
@@ -25,25 +39,21 @@ export const Register = () => {
         }
 
         try {
-            const response = await axios.post(
-                `${apiUrl}/users/register`,
-                formValues
-            );
-            console.log(response.data);
-            setSuccess("User registered successfully!");
+            await axios.post(`${apiUrl}/users/register`, formValues);
+            setSuccess('User registered successfully!');
+            setTimeout(() => {
+                setSuccess('');
+                navigate('/');
+            }, 1000);
             setError(null);
         } catch (err) {
             console.log('catched error: ', err);
             let messageError;
-            if (
-                axios.isAxiosError(err) &&
-                err.response &&
-                err.response.data &&
-                err.response.data.errors &&
-                err.response.data.errors[0].message
-            ) {
-            console.log('err.response.data: ', err.response.data);
-                messageError = err.response.data.errors[0].message;
+
+            if (axios.isAxiosError(err)) {
+                messageError =
+                    err.response?.data?.errors?.[0]?.message ||
+                    'An error occurred.';
             } else {
                 messageError = 'An error occurred while registering.';
             }
