@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './App.css';
 import { Home } from './pages/Home';
 import { Container } from '@mui/material';
+import Navbar from './components/Navbar';
 
 function App() {
     const queryClient = new QueryClient();
@@ -11,6 +12,7 @@ function App() {
         <Container>
             <QueryClientProvider client={queryClient}>
                 <Router>
+                    <Navbar />
                     <Routes>
                         <Route path="/" element={<Home />} />
                     </Routes>
