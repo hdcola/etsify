@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const fetchStripeClientSecret = async (items: { id: string, amount: number }[]) => {
     try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/create-payment-intent`, {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/payments/create-payment-intent`, {
             items: items,
         }, {
             headers: { 'Content-Type': 'application/json' },
