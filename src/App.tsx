@@ -5,6 +5,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import './App.css';
 
 import { Container } from '@mui/material';
+import Navbar from './components/Navbar';
 
 import { Home } from './pages/Home';
 import { CheckoutPage } from './pages/CheckoutPage';
@@ -25,6 +26,7 @@ function App() {
         <Container>
             <QueryClientProvider client={queryClient}>
                 <Router>
+                    <Navbar />
                     <Elements
                         options={{ appearance, loader }}
                         stripe={stripePromise}
