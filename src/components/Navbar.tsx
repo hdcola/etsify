@@ -25,14 +25,6 @@ import { useState, MouseEvent } from "react";
 import Logo from "./logo.png";
 import SearchBar from "./SearchBar";
 
-/* const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
-    '& .MuiBadge-badge': {
-      right: -3,
-      top: 13,
-      border: `2px solid ${theme.palette.background.paper}`,
-      padding: '0 4px',
-    },
-  })); */
 
 const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -50,6 +42,9 @@ const Navbar = () => {
     };
 
     return (
+        <>
+        {/* TODO: Workaround until actual functionality is plugged in. */}
+        {<div hidden><button type="button" onClick={() => setIsLoggedIn(prev => !prev)}>{searchQuery}</button></div>}
         <AppBar
             position="sticky"
             elevation={0}
@@ -155,6 +150,7 @@ const Navbar = () => {
                 </Menu>
             </Toolbar>
         </AppBar>
+        </>
     );
 };
 
