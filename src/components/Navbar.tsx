@@ -22,7 +22,7 @@ import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import { useState, MouseEvent } from "react";
-import Logo from "./logo.png";
+import Logo from "../assets/logo.png";
 import SearchBar from "./SearchBar";
 
 
