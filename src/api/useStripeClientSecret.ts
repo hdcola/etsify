@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-export const fetchStripeClientSecret = async (items: { id: string, amount: number }[]) => {
+const fetchStripeClientSecret = async (items: { id: string, amount: number }[]) => {
     try {
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/create-payment-intent`, {
             items: items,
