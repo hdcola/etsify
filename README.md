@@ -14,7 +14,7 @@ Create a `.env` file in the root of the project and add the following:
 
 ```env
 VITE_STRIPE_PUBLIC_KEY=YOUR_STRIPE_PUBLIC_KEY
-VITE_API_URL=http://localhost:3000
+VITE_API_URL=YOUR_API_URL
 ```
 
 ### Run the development server
