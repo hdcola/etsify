@@ -163,10 +163,12 @@ const Navbar = () => {
                                 Order reviews
                             </MenuItem>
                             <MenuItem>
-                                <ListItemIcon>
-                                    <StorefrontOutlinedIcon fontSize="small" />
-                                </ListItemIcon>
-                                Sell on etsify
+                                <Link to='/store/create'>
+                                    <ListItemIcon>
+                                        <StorefrontOutlinedIcon fontSize='small' />
+                                    </ListItemIcon>
+                                    Sell on etsify
+                                </Link>
                             </MenuItem>
                             <Divider />
                             <MenuItem>

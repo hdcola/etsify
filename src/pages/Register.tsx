@@ -18,7 +18,7 @@ export const Register = () => {
         username: yup.string().required('username is Required!'),
         full_name: yup.string().required('Your Full Name is Required!'),
         email: yup.string().email('Must be a valid email').required('Email is required'),
-        password: yup.string().required('Password is required'), // TODO: add something like this: min(4).max(20)
+        password: yup.string().required(), // TODO: add something like this: min(4).max(20)
         password2: yup
             .string()
             .oneOf([yup.ref('password')], "Passwords don't match")

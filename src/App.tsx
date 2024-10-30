@@ -14,6 +14,7 @@ import { Login } from './pages/Login';
 import { Home } from './pages/Home';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { CompletePage } from './pages/CompletePage';
+import { CreateStore } from './pages/CreateStore';
 import { Elements } from '@stripe/react-stripe-js';
 
 const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
@@ -57,6 +58,10 @@ function App() {
                                 <Route
                                     path="/complete"
                                     element={<CompletePage />}
+                                />
+                                <Route
+                                    path="/store/create"
+                                    element={<CreateStore />}
                                 />
                             </Routes>
                         </Elements>
