@@ -2,11 +2,17 @@ import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { Stack, TextField, Button } from '@mui/material';
 import axios from 'axios';
+import * as yup from 'yup';
 // import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const initialValues = { email: '', password: '' };
+    const schema = yup.object().shape({
+        email: yup.string().email('Must be a valid email').required('Email is required'),
+        password: yup.string().required('Password is required'), 
+    });
+
     const [formValues, setFormValues] = useState(initialValues);
     const [error, setError] = useState<{ [key: string]: string | null }>({});
     const [success, setSuccess] = useState<string | null>(null);
@@ -21,20 +27,8 @@ export const Login = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const newErrors: { [key: string]: string } = {};
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formValues.email)) {
-            newErrors.email = 'Please provide a valid email.';
-            return;
-        }
-
-        if (Object.keys(newErrors).length > 0) {
-            setError(newErrors);
-            return;
-        }
-
         try {
+            await schema.validate(formValues, { abortEarly: false });
             await axios.post(`${apiUrl}/api/users/login`, formValues);
             setSuccess('Login successful!');
             setTimeout(() => {
@@ -47,6 +41,13 @@ export const Login = () => {
             if (axios.isAxiosError(err)) {
                 messageError =
                     err.response?.data?.message || 'An error occurred.';
+            } else if (err instanceof yup.ValidationError) {
+                const validationErrors: { [key: string]: string | null } = {};
+                err.inner.forEach((error) => {
+                    validationErrors[error.path as string] = error.message;
+                });
+                setError(validationErrors);
+                return; 
             }
             setError({ general: messageError });
             setSuccess(null);

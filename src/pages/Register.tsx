@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { Stack, TextField, Button } from '@mui/material';
 import axios from 'axios';
+import * as yup from 'yup';
 // import { useNavigate } from 'react-router-dom';
 
 export const Register = () => {
@@ -13,6 +14,17 @@ export const Register = () => {
         password: '',
         password2: '',
     };
+    const schema = yup.object().shape({
+        username: yup.string().required('username is Required!'),
+        full_name: yup.string().required('Your Full Name is Required!'),
+        email: yup.string().email('Must be a valid email').required('Email is required'),
+        password: yup.string().required('Password is required'), // TODO: add something like this: min(4).max(20)
+        password2: yup
+            .string()
+            .oneOf([yup.ref('password')], "Passwords don't match")
+            .required('Please confirm your password'),
+    });
+
     const [formValues, setFormValues] = useState(initialValues);
     const [error, setError] = useState<{ [key: string]: string | null }>({});
     const [success, setSuccess] = useState<string | null>(null);
@@ -21,35 +33,19 @@ export const Register = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormValues((prev) => ({ ...prev, [name]: value }));
-        setError((prev) => ({ ...prev, [name]: null })); 
+        setError((prev) => ({ ...prev, [name]: null }));
     };
-
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const newErrors: { [key: string]: string } = {};
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formValues.email)) {
-            newErrors.email = 'Please provide a valid email.';
-        }
-
-        if (formValues.password !== formValues.password2) {
-            newErrors.password2 = 'Passwords do not match.';
-        }
-
-        if (Object.keys(newErrors).length > 0) {
-            setError(newErrors);
-            return;
-        }
-
         try {
+            await schema.validate(formValues, { abortEarly: false });
             await axios.post(`${apiUrl}/api/users/register`, formValues);
             setSuccess('User registered successfully!');
             setTimeout(() => {
                 setSuccess('');
                 // navigate('/');
-            }, 1000);
+            }, 2000);
             setError({});
         } catch (err) {
             let messageError = 'An error occurred while registering.';
@@ -58,6 +54,13 @@ export const Register = () => {
                 messageError =
                     err.response?.data?.errors?.[0]?.message ||
                     'An error occurred.';
+            } else if (err instanceof yup.ValidationError) {
+                const validationErrors: { [key: string]: string | null } = {};
+                err.inner.forEach((error) => {
+                    validationErrors[error.path as string] = error.message;
+                });
+                setError(validationErrors);
+                return; // Exit early to avoid general error message
             }
             setError({ general: messageError });
             setSuccess(null);
@@ -66,13 +69,13 @@ export const Register = () => {
 
     return (
         <Stack
-            component="form"
+            component='form'
             onSubmit={handleSubmit}
             spacing={4}
             paddingX={3}
             paddingY={5}
-            direction="row"
-            justifyContent="center"
+            direction='row'
+            justifyContent='center'
             sx={{
                 marginTop: '100px',
                 marginX: 'auto',
@@ -82,72 +85,72 @@ export const Register = () => {
             }}
         >
             <Stack spacing={3}>
-                <Typography variant="h4" component="h1">
+                <Typography variant='h4' component='h1'>
                     Register a new user
                 </Typography>
 
                 {success && (
-                    <Typography color="success.main">{success}</Typography>
+                    <Typography color='success.main'>{success}</Typography>
                 )}
                 {error.general && (
-                    <Typography color="error">{error.general}</Typography>
+                    <Typography color='error'>{error.general}</Typography>
                 )}
-                
+
                 <TextField
-                    label="Username"
-                    variant="outlined"
+                    label='Username'
+                    variant='outlined'
                     required
-                    name="username"
+                    name='username'
                     value={formValues.username}
                     onChange={handleChange}
                     helperText={error.username}
                     error={!!error.username}
                 />
                 <TextField
-                    label="Full Name"
-                    variant="outlined"
+                    label='Full Name'
+                    variant='outlined'
                     required
-                    name="full_name"
+                    name='full_name'
                     value={formValues.full_name}
                     onChange={handleChange}
                     helperText={error.full_name}
                     error={!!error.full_name}
                 />
                 <TextField
-                    label="Email"
-                    variant="outlined"
+                    label='Email'
+                    variant='outlined'
                     required
-                    name="email"
+                    name='email'
                     value={formValues.email}
                     onChange={handleChange}
                     helperText={error.email}
                     error={!!error.email}
                 />
                 <TextField
-                    label="Password"
-                    type="password"
+                    label='Password'
+                    type='password'
                     required
-                    name="password"
+                    name='password'
                     value={formValues.password}
                     onChange={handleChange}
                     helperText={error.password}
                     error={!!error.password}
                 />
                 <TextField
-                    label="Repeat password"
-                    type="password"
+                    label='Repeat password'
+                    type='password'
                     required
-                    name="password2"
+                    name='password2'
                     value={formValues.password2}
                     onChange={handleChange}
                     helperText={error.password2}
                     error={!!error.password2}
                 />
                 <Button
-                    variant="contained"
+                    variant='contained'
                     fullWidth
-                    size="medium"
-                    type="submit"
+                    size='medium'
+                    type='submit'
                 >
                     Save
                 </Button>
