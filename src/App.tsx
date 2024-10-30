@@ -1,7 +1,9 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+import { loadStripe } from '@stripe/stripe-js';
 import './App.css';
-import { Home } from './pages/Home';
+
 import { Container, useTheme, useMediaQuery } from '@mui/material';
 import Navbar from './components/Navbar';
 import SingleItem from './pages/SingleItem';
@@ -9,10 +11,22 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 
+import { Home } from './pages/Home';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { CompletePage } from './pages/CompletePage';
+import { Elements } from '@stripe/react-stripe-js';
+
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+const stripePromise = loadStripe(stripePublicKey);
+
 function App() {
     const theme = useTheme();
     const lessThanXL = useMediaQuery(theme.breakpoints.down('xl'));
     const queryClient = new QueryClient();
+    const appearance: { theme: 'stripe' | 'night' | 'flat' | undefined } = {
+        theme: 'stripe',
+    };
+    const loader = 'auto';
 
     return (
         <>
@@ -21,12 +35,31 @@ function App() {
                 <QueryClientProvider client={queryClient}>
                     <Router>
                         <Navbar />
-                        <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/items/:id" element={<SingleItem />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path="/login" element={<Login />} />
-                      </Routes>
+                        <Elements
+                            options={{ appearance, loader }}
+                            stripe={stripePromise}
+                        >
+                            <Routes>
+                                <Route path="/" element={<Home />} />
+                                <Route
+                                    path="/items/:id"
+                                    element={<SingleItem />}
+                                />
+                                <Route
+                                    path="/register"
+                                    element={<Register />}
+                                />
+                                <Route path="/login" element={<Login />} />
+                                <Route
+                                    path="/checkout"
+                                    element={<CheckoutPage />}
+                                />
+                                <Route
+                                    path="/complete"
+                                    element={<CompletePage />}
+                                />
+                            </Routes>
+                        </Elements>
                     </Router>
                 </QueryClientProvider>
             </Container>
