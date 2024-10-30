@@ -6,6 +6,8 @@ import { Container, useTheme, useMediaQuery } from '@mui/material';
 import Navbar from './components/Navbar';
 import SingleItem from './pages/SingleItem';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Register } from './pages/Register';
+import { Login } from './pages/Login';
 
 function App() {
     const theme = useTheme();
@@ -22,7 +24,9 @@ function App() {
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/items/:id" element={<SingleItem />} />
-                        </Routes>
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/login" element={<Login />} />
+                      </Routes>
                     </Router>
                 </QueryClientProvider>
             </Container>
