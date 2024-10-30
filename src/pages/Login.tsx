@@ -2,52 +2,53 @@ import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { Stack, TextField, Button } from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const initialValues = { email: '', password: '' };
     const [formValues, setFormValues] = useState(initialValues);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<{ [key: string]: string | null }>({});
     const [success, setSuccess] = useState<string | null>(null);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormValues((prev) => ({ ...prev, [name]: value }));
+        setError((prev) => ({ ...prev, [name]: null }));
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        const newErrors: { [key: string]: string } = {};
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formValues.email)) {
-            setError('Please provide a valid email.');
+            newErrors.email = 'Please provide a valid email.';
+            return;
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setError(newErrors);
             return;
         }
 
         try {
-            await axios.post(`${apiUrl}/users/login`, formValues);
+            await axios.post(`${apiUrl}/api/users/login`, formValues);
             setSuccess('Login successful!');
             setTimeout(() => {
                 setSuccess('');
-                navigate('/');
+                // navigate('/');
             }, 1000);
-            setError(null);
+            setError({});
         } catch (err) {
-            console.log('catched error: ', err);
-            let messageError;
-            if (
-                axios.isAxiosError(err) &&
-                err.response &&
-                err.response.data &&
-                err.response.data.message
-            ) {
-                messageError = err.response.data.message;
-            } else {
-                messageError = 'An error occurred while logging in.';
+            let messageError = 'An error occurred while logging in.';
+            if (axios.isAxiosError(err)) {
+                messageError =
+                    err.response?.data?.message || 'An error occurred.';
             }
-            setError(messageError);
+            setError({ general: messageError });
             setSuccess(null);
         }
     };
@@ -73,13 +74,11 @@ export const Login = () => {
                 <Typography variant='h4' component='h1'>
                     Login form
                 </Typography>
-                {error && (
-                    <Typography color='error'>
-                        {Array.isArray(error) ? error.join(', ') : error}
-                    </Typography>
-                )}
                 {success && (
                     <Typography color='success.main'>{success}</Typography>
+                )}
+                {error.general && (
+                    <Typography color='error'>{error.general}</Typography>
                 )}
                 <TextField
                     label='Email'
@@ -88,6 +87,8 @@ export const Login = () => {
                     name='email'
                     value={formValues.email}
                     onChange={handleChange}
+                    helperText={error.email}
+                    error={!!error.email}
                 />
                 <TextField
                     label='Password'
