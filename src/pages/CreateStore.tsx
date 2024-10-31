@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import {
     Stack,
@@ -31,6 +31,7 @@ export const CreateStore = () => {
     });
 
     const [formValues, setFormValues] = useState(initialValues);
+    const [countries, setCountries] = useState<{ country_id: string; name: string; }[]>([]);
     const [error, setError] = useState<{ [key: string]: string | null }>({});
     const [success, setSuccess] = useState<string | null>(null);
     const [activeStep, setActiveStep] = useState(0);
@@ -71,15 +72,28 @@ export const CreateStore = () => {
             setSuccess('Store created successfully!');
             setError({});
         } catch (err) {
+            console.log(err);
             let messageError = 'An error occurred while creating the store.';
             if (axios.isAxiosError(err)) {
                 messageError =
-                    err.response?.data?.errors?.[0]?.message || messageError;
+                    err.response?.data?.message || messageError;
             }
             setError({ general: messageError });
             setSuccess(null);
         }
     };
+    useEffect(() => {
+        const loadCountries = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/api/countries`);
+                setCountries(response.data.allCountries);
+            } catch (error) {
+                console.error(error);
+                setError({ general: 'Failed to load countries.' });
+            }
+        };
+        loadCountries();
+    }, []);
 
     return (
         <Stack
@@ -126,9 +140,11 @@ export const CreateStore = () => {
                             <MenuItem value=''>
                                 <em>None</em>
                             </MenuItem>
-                            <MenuItem value='1'>USA</MenuItem>
-                            <MenuItem value='2'>Canada</MenuItem>
-                            <MenuItem value='3'>UK</MenuItem>
+                            {countries.map((country) => (
+                                <MenuItem key={country.country_id} value={country.country_id}>
+                                    {country.name}
+                                </MenuItem>
+                            ))}
                         </Select>
                         <FormHelperText>{error.country_id}</FormHelperText>
                     </FormControl>
