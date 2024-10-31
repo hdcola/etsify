@@ -17,7 +17,6 @@ import {
 import axios from 'axios';
 import * as yup from 'yup';
 
-// TODO: connect to countries table to fetch countries in Select
 export const CreateStore = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const initialValues = {
@@ -68,7 +67,12 @@ export const CreateStore = () => {
     const handleSubmit = async () => {
         try {
             await schema.validate(formValues, { abortEarly: false });
-            await axios.post(`${apiUrl}/api/store/`, formValues);
+            const token = localStorage.getItem('token');
+            await axios.post(`${apiUrl}/api/stores/`, formValues, {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
             setSuccess('Store created successfully!');
             setError({});
         } catch (err) {

@@ -60,7 +60,7 @@ function App() {
                                     element={<CompletePage />}
                                 />
                                 <Route
-                                    path="/store/create"
+                                    path="/stores/create"
                                     element={<CreateStore />}
                                 />
                             </Routes>
