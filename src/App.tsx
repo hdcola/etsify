@@ -16,6 +16,7 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { CompletePage } from './pages/CompletePage';
 import { CreateStore } from './pages/CreateStore';
 import { Elements } from '@stripe/react-stripe-js';
+import { TestPage } from './pages/TestPage';
 
 const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 const stripePromise = loadStripe(stripePublicKey);
@@ -63,6 +64,7 @@ function App() {
                                     path="/stores/create"
                                     element={<CreateStore />}
                                 />
+                                <Route path="/test" element={<TestPage />} />
                             </Routes>
                         </Elements>
                     </Router>
