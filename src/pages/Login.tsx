@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import { Stack, TextField, Button } from '@mui/material';
 import axios from 'axios';
 import * as yup from 'yup';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -16,7 +16,7 @@ export const Login = () => {
     const [formValues, setFormValues] = useState(initialValues);
     const [error, setError] = useState<{ [key: string]: string | null }>({});
     const [success, setSuccess] = useState<string | null>(null);
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -29,12 +29,13 @@ export const Login = () => {
 
         try {
             await schema.validate(formValues, { abortEarly: false });
-            await axios.post(`${apiUrl}/api/users/login`, formValues);
+            const response = await axios.post(`${apiUrl}/api/users/login`, formValues);
             setSuccess('Login successful!');
+            localStorage.setItem('token', response.data.token);
             setTimeout(() => {
                 setSuccess('');
-                // navigate('/');
-            }, 1000);
+                navigate('/');
+            }, 2000);
             setError({});
         } catch (err) {
             let messageError = 'An error occurred while logging in.';

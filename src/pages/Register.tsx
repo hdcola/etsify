@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import { Stack, TextField, Button } from '@mui/material';
 import axios from 'axios';
 import * as yup from 'yup';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const Register = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -18,7 +18,7 @@ export const Register = () => {
         username: yup.string().required('username is Required!'),
         full_name: yup.string().required('Your Full Name is Required!'),
         email: yup.string().email('Must be a valid email').required('Email is required'),
-        password: yup.string().required('Password is required'), // TODO: add something like this: min(4).max(20)
+        password: yup.string().required(), // TODO: add something like this: min(4).max(20)
         password2: yup
             .string()
             .oneOf([yup.ref('password')], "Passwords don't match")
@@ -28,7 +28,7 @@ export const Register = () => {
     const [formValues, setFormValues] = useState(initialValues);
     const [error, setError] = useState<{ [key: string]: string | null }>({});
     const [success, setSuccess] = useState<string | null>(null);
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -40,11 +40,13 @@ export const Register = () => {
 
         try {
             await schema.validate(formValues, { abortEarly: false });
-            await axios.post(`${apiUrl}/api/users/register`, formValues);
+            const response = await axios.post(`${apiUrl}/api/users/register`, formValues); 
+            localStorage.setItem('token', response.data.token);
             setSuccess('User registered successfully!');
             setTimeout(() => {
                 setSuccess('');
-                // navigate('/');
+                navigate('/'); 
+                // TODO: probably navigate to login, in this case we don't need to save token to localStorage 
             }, 2000);
             setError({});
         } catch (err) {
@@ -60,7 +62,7 @@ export const Register = () => {
                     validationErrors[error.path as string] = error.message;
                 });
                 setError(validationErrors);
-                return; // Exit early to avoid general error message
+                return; 
             }
             setError({ general: messageError });
             setSuccess(null);

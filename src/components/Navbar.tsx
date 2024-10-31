@@ -27,20 +27,35 @@ import Logo from '../assets/logo.png';
 import LogoImage from '../assets/logo-image.png';
 import SearchBar from './SearchBar';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+    const apiUrl = import.meta.env.VITE_API_URL;
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true); // Plug in logged state
-
     const open = Boolean(anchorEl);
 
+    const navigate = useNavigate();
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleLogout = async () => {
+        try {
+            console.log('logout ...');
+             await axios.post(`${apiUrl}/api/users/logout`); 
+            localStorage.removeItem('token');             
+        } catch (error) {
+            console.error('Logout failed', error);            
+        }
+    };
+    const navigateCreateStore = async () => {
+        navigate('/stores/create'); 
     };
 
     return (
@@ -162,11 +177,11 @@ const Navbar = () => {
                                 </ListItemIcon>
                                 Order reviews
                             </MenuItem>
-                            <MenuItem>
-                                <ListItemIcon>
-                                    <StorefrontOutlinedIcon fontSize="small" />
-                                </ListItemIcon>
-                                Sell on etsify
+                            <MenuItem onClick={navigateCreateStore}>
+                                    <ListItemIcon>
+                                        <StorefrontOutlinedIcon fontSize='small' />
+                                    </ListItemIcon>
+                                    Sell on etsify
                             </MenuItem>
                             <Divider />
                             <MenuItem>
@@ -175,7 +190,7 @@ const Navbar = () => {
                                 </ListItemIcon>
                                 Account settings
                             </MenuItem>
-                            <MenuItem>
+                            <MenuItem onClick={handleLogout}>
                                 <ListItemIcon>
                                     <Logout fontSize="small" />
                                 </ListItemIcon>
