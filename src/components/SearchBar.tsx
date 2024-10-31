@@ -3,8 +3,8 @@ import {
     TextField,
     IconButton,
     InputAdornment,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import {
     useState,
     ChangeEvent,
@@ -12,14 +12,14 @@ import {
     SetStateAction,
     FormEvent,
     MouseEvent,
-} from "react";
+} from 'react';
 
 interface Props {
     setSearchQuery: Dispatch<SetStateAction<string>>;
 }
 
 const SearchBar = ({ setSearchQuery }: Props) => {
-    const [searchString, setSearchString] = useState<string>("");
+    const [searchString, setSearchString] = useState<string>('');
 
     const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
         setSearchString(event.target.value);
@@ -29,11 +29,11 @@ const SearchBar = ({ setSearchQuery }: Props) => {
         event.preventDefault();
         console.log(searchString);
         setSearchQuery(searchString);
-        setSearchString("");
+        setSearchString('');
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <FormControl variant="outlined" fullWidth>
                 <TextField
                     id="search-bar"
@@ -46,9 +46,9 @@ const SearchBar = ({ setSearchQuery }: Props) => {
                     size="small"
                     color="primary"
                     sx={{
-                        margin: "10px auto",
-                        "& .MuiOutlinedInput-root": {
-                            borderRadius: "50px",
+                        margin: '10px auto',
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: '50px',
                         },
                     }}
                     slotProps={{
@@ -60,7 +60,7 @@ const SearchBar = ({ setSearchQuery }: Props) => {
                                     </IconButton>
                                 </InputAdornment>
                             ),
-                        }
+                        },
                     }}
                     fullWidth
                 />
