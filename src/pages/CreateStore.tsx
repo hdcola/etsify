@@ -77,6 +77,13 @@ export const CreateStore = () => {
             if (axios.isAxiosError(err)) {
                 messageError =
                     err.response?.data?.message || messageError;
+            }  else if (err instanceof yup.ValidationError) {
+                const validationErrors: { [key: string]: string | null } = {};
+                err.inner.forEach((error) => {
+                    validationErrors[error.path as string] = error.message;
+                });
+                setError(validationErrors);
+                return; // Exit early to avoid general error message
             }
             setError({ general: messageError });
             setSuccess(null);

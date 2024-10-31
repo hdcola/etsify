@@ -60,7 +60,7 @@ export const Register = () => {
                     validationErrors[error.path as string] = error.message;
                 });
                 setError(validationErrors);
-                return; // Exit early to avoid general error message
+                return; 
             }
             setError({ general: messageError });
             setSuccess(null);
