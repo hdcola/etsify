@@ -27,8 +27,10 @@ import Logo from '../assets/logo.png';
 import LogoImage from '../assets/logo-image.png';
 import SearchBar from './SearchBar';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Navbar = () => {
+    const apiUrl = import.meta.env.VITE_API_URL;
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true); // Plug in logged state
@@ -41,6 +43,15 @@ const Navbar = () => {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleLogout = async () => {
+        try {
+            console.log('logout ...');
+             await axios.post(`${apiUrl}/api/users/logout`); 
+            localStorage.removeItem('token');             
+        } catch (error) {
+            console.error('Logout failed', error);            
+        }
     };
 
     return (
@@ -163,12 +174,10 @@ const Navbar = () => {
                                 Order reviews
                             </MenuItem>
                             <MenuItem>
-                                <Link to='/store/create'>
                                     <ListItemIcon>
                                         <StorefrontOutlinedIcon fontSize='small' />
                                     </ListItemIcon>
                                     Sell on etsify
-                                </Link>
                             </MenuItem>
                             <Divider />
                             <MenuItem>
@@ -177,7 +186,7 @@ const Navbar = () => {
                                 </ListItemIcon>
                                 Account settings
                             </MenuItem>
-                            <MenuItem>
+                            <MenuItem onClick={handleLogout}>
                                 <ListItemIcon>
                                     <Logout fontSize="small" />
                                 </ListItemIcon>

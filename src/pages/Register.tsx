@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import { Stack, TextField, Button } from '@mui/material';
 import axios from 'axios';
 import * as yup from 'yup';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const Register = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -28,7 +28,7 @@ export const Register = () => {
     const [formValues, setFormValues] = useState(initialValues);
     const [error, setError] = useState<{ [key: string]: string | null }>({});
     const [success, setSuccess] = useState<string | null>(null);
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -40,11 +40,13 @@ export const Register = () => {
 
         try {
             await schema.validate(formValues, { abortEarly: false });
-            await axios.post(`${apiUrl}/api/users/register`, formValues);
+            const response = await axios.post(`${apiUrl}/api/users/register`, formValues); 
+            localStorage.setItem('token', response.data.token);
             setSuccess('User registered successfully!');
             setTimeout(() => {
                 setSuccess('');
-                // navigate('/');
+                navigate('/'); 
+                // TODO: probably navigate to login, in this case we don't need to save token to localStorage 
             }, 2000);
             setError({});
         } catch (err) {
