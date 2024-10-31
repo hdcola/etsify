@@ -6,12 +6,10 @@ import {
     Rating,
     Link,
     Avatar,
-    IconButton,
-    Fab,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import { useParams } from 'react-router-dom';
+import FavoriteFab from '../components/FavoriteFab';
 
 const SingleItem = () => {
     const id = useParams();
@@ -35,16 +33,11 @@ const SingleItem = () => {
                         position={'relative'}
                         overflow={'hidden'}
                     >
-                        <IconButton
-                            sx={{
-                                position: 'absolute',
-                                right: 0,
-                            }}
-                        >
-                            <Fab>
-                                <FavoriteBorderOutlinedIcon fontSize="medium" />
-                            </Fab>
-                        </IconButton>
+                        <FavoriteFab
+                            itemId={id.toString()}
+                            favorite={false}
+                            size="medium"
+                        />
                         <Box
                             sx={{
                                 display: 'flex',
