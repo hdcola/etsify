@@ -4,18 +4,23 @@ import { Stack, TextField, Button } from '@mui/material';
 import axios from 'axios';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import useLoginStore from '../store/useLoginStore';
 
 export const Login = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const initialValues = { email: '', password: '' };
     const schema = yup.object().shape({
-        email: yup.string().email('Must be a valid email').required('Email is required'),
-        password: yup.string().required('Password is required'), 
+        email: yup
+            .string()
+            .email('Must be a valid email')
+            .required('Email is required'),
+        password: yup.string().required('Password is required'),
     });
+
+    const { login, isLoggedIn } = useLoginStore();
 
     const [formValues, setFormValues] = useState(initialValues);
     const [error, setError] = useState<{ [key: string]: string | null }>({});
-    const [success, setSuccess] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,14 +34,16 @@ export const Login = () => {
 
         try {
             await schema.validate(formValues, { abortEarly: false });
-            const response = await axios.post(`${apiUrl}/api/users/login`, formValues);
-            setSuccess('Login successful!');
-            localStorage.setItem('token', response.data.token);
-            setTimeout(() => {
-                setSuccess('');
-                navigate('/');
-            }, 2000);
+            const response = await axios.post(
+                `${apiUrl}/api/users/login`,
+                formValues
+            );
+            const token = response.data.token;
+            login(token);
+
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             setError({});
+            navigate('/');
         } catch (err) {
             let messageError = 'An error occurred while logging in.';
             if (axios.isAxiosError(err)) {
@@ -48,22 +55,21 @@ export const Login = () => {
                     validationErrors[error.path as string] = error.message;
                 });
                 setError(validationErrors);
-                return; 
+                return;
             }
             setError({ general: messageError });
-            setSuccess(null);
         }
     };
 
     return (
         <Stack
-            component='form'
+            component="form"
             onSubmit={handleSubmit}
             spacing={4}
             paddingX={3}
             paddingY={5}
-            direction='row'
-            justifyContent='center'
+            direction="row"
+            justifyContent="center"
             sx={{
                 marginTop: '100px',
                 marginX: 'auto',
@@ -73,38 +79,40 @@ export const Login = () => {
             }}
         >
             <Stack spacing={3}>
-                <Typography variant='h4' component='h1'>
+                <Typography variant="h4" component="h1">
                     Login form
                 </Typography>
-                {success && (
-                    <Typography color='success.main'>{success}</Typography>
+                {isLoggedIn && (
+                    <Typography color="success.main">
+                        Login successful!
+                    </Typography>
                 )}
                 {error.general && (
-                    <Typography color='error'>{error.general}</Typography>
+                    <Typography color="error">{error.general}</Typography>
                 )}
                 <TextField
-                    label='Email'
-                    variant='outlined'
+                    label="Email"
+                    variant="outlined"
                     required
-                    name='email'
+                    name="email"
                     value={formValues.email}
                     onChange={handleChange}
                     helperText={error.email}
                     error={!!error.email}
                 />
                 <TextField
-                    label='Password'
-                    type='password'
+                    label="Password"
+                    type="password"
                     required
-                    name='password'
+                    name="password"
                     value={formValues.password}
                     onChange={handleChange}
                 />
                 <Button
-                    variant='contained'
+                    variant="contained"
                     fullWidth
-                    size='medium'
-                    type='submit'
+                    size="medium"
+                    type="submit"
                 >
                     Login
                 </Button>
