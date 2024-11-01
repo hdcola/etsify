@@ -27,15 +27,14 @@ import Logo from '../assets/logo.png';
 import LogoImage from '../assets/logo-image.png';
 import SearchBar from './SearchBar';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import useLoginStore from '../store/useLoginStore';
 
 const Navbar = () => {
-    const apiUrl = import.meta.env.VITE_API_URL;
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true); // Plug in logged state
     const open = Boolean(anchorEl);
+    const { isLoggedIn, logout, username } = useLoginStore();
 
     const navigate = useNavigate();
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -48,29 +47,19 @@ const Navbar = () => {
     const handleLogout = async () => {
         try {
             console.log('logout ...');
-             await axios.post(`${apiUrl}/api/users/logout`); 
-            localStorage.removeItem('token');             
+            logout();
         } catch (error) {
-            console.error('Logout failed', error);            
+            console.error('Logout failed', error);
         }
     };
     const navigateCreateStore = async () => {
-        navigate('/stores/create'); 
+        navigate('/stores/create');
     };
 
     return (
         <>
             {/* TODO: Workaround until actual functionality is plugged in. */}
-            {
-                <div hidden>
-                    <button
-                        type="button"
-                        onClick={() => setIsLoggedIn((prev) => !prev)}
-                    >
-                        {searchQuery}
-                    </button>
-                </div>
-            }
+            {<div hidden>{searchQuery}</div>}
             <AppBar
                 position="sticky"
                 elevation={0}
@@ -135,12 +124,24 @@ const Navbar = () => {
                             </IconButton>
                             {isLoggedIn ? (
                                 <IconButton onClick={handleClick}>
-                                    <Avatar>TP</Avatar>
+                                    <Avatar>{username}</Avatar>
                                 </IconButton>
                             ) : (
                                 <>
-                                    <Button color="primary">Login</Button>
-                                    <Button color="secondary">Register</Button>
+                                    <Button
+                                        component={Link}
+                                        to="/login"
+                                        color="primary"
+                                    >
+                                        Login
+                                    </Button>
+                                    <Button
+                                        component={Link}
+                                        to="/register"
+                                        color="secondary"
+                                    >
+                                        Register
+                                    </Button>
                                 </>
                             )}
                         </Stack>
@@ -178,10 +179,10 @@ const Navbar = () => {
                                 Order reviews
                             </MenuItem>
                             <MenuItem onClick={navigateCreateStore}>
-                                    <ListItemIcon>
-                                        <StorefrontOutlinedIcon fontSize='small' />
-                                    </ListItemIcon>
-                                    Sell on etsify
+                                <ListItemIcon>
+                                    <StorefrontOutlinedIcon fontSize="small" />
+                                </ListItemIcon>
+                                Sell on etsify
                             </MenuItem>
                             <Divider />
                             <MenuItem>
