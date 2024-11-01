@@ -15,6 +15,7 @@ import { Home } from './pages/Home';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { CompletePage } from './pages/CompletePage';
 import { CreateStore } from './pages/CreateStore';
+import { StoreDashboard } from './pages/StoreDashboard';
 import { Elements } from '@stripe/react-stripe-js';
 import { TestPage } from './pages/TestPage';
 
@@ -63,6 +64,10 @@ function App() {
                                 <Route
                                     path="/stores/create"
                                     element={<CreateStore />}
+                                />
+                                <Route
+                                    path="/stores/dashboard"
+                                    element={<StoreDashboard />}
                                 />
                                 <Route path="/test" element={<TestPage />} />
                             </Routes>
