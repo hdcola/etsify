@@ -4,6 +4,8 @@ import axios, {
     CancelTokenSource,
     AxiosError
 } from 'axios';
+import useLoginStore from '../store/useLoginStore';
+
 
 const DEFAULT_UPLOAD_URL = import.meta.env.VITE_API_URL
     ? `${import.meta.env.VITE_API_URL}/api/files/upload`
@@ -40,6 +42,12 @@ const uploadFile = async (
     url: string = DEFAULT_UPLOAD_URL, // 设置默认值
     options?: UploadOptions
 ): Promise<UploadResponse> => {
+    const { isLoggedIn, authToken } = useLoginStore.getState();
+
+    if (!isLoggedIn) {
+        throw new UploadError('User is not logged in');
+    }
+
     if (!file || !(file instanceof File)) {
         throw new UploadError('Invalid file input');
     }
@@ -54,6 +62,7 @@ const uploadFile = async (
     const config: AxiosRequestConfig = {
         headers: {
             'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${authToken}`,
         },
         cancelToken: options?.cancelToken?.token,
         onUploadProgress: (progressEvent: AxiosProgressEvent) => {
