@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
-import { Stack, TextField, Button } from '@mui/material';
+import { Stack, TextField, Button, Divider } from '@mui/material';
 import axios from 'axios';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import useLoginStore from '../store/useLoginStore';
+import { GoogleLoginComponent } from '../components/GoogleLoginComponent';
 
 export const Login = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -116,6 +117,8 @@ export const Login = () => {
                 >
                     Login
                 </Button>
+                <Divider variant="middle" />
+                <GoogleLoginComponent />
             </Stack>
         </Stack>
     );
