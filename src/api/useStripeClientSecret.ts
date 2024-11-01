@@ -1,12 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import useLoginStore from '../store/useLoginStore';
 
 const fetchStripeClientSecret = async (items: { id: string, amount: number }[]) => {
     try {
+        const { isLoggedIn, authToken } = useLoginStore.getState();
+        if (!isLoggedIn) {
+            throw new Error('User is not logged in');
+        }
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/create-payment-intent`, {
             items: items,
         }, {
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
         });
 
         return response.data;
