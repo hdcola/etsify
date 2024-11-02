@@ -34,7 +34,7 @@ const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const { isLoggedIn, logout, username } = useLoginStore();
+    const { isLoggedIn, logout, username, picture } = useLoginStore();
 
     const navigate = useNavigate();
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -126,7 +126,14 @@ const Navbar = () => {
                             </IconButton>
                             {isLoggedIn ? (
                                 <IconButton onClick={handleClick}>
-                                    <Avatar>{username}</Avatar>
+                                    {picture ? (
+                                        <Avatar
+                                            alt={username}
+                                            src={picture}
+                                        ></Avatar>
+                                    ) : (
+                                        <Avatar>{username}</Avatar>
+                                    )}
                                 </IconButton>
                             ) : (
                                 <>
