@@ -4,7 +4,7 @@ import { combine } from 'zustand/middleware'
 import { jwtDecode } from 'jwt-decode'
 
 interface DecodedToken {
-    id: string
+    userId: string
     email: string
     username: string
     full_name: string
@@ -40,7 +40,7 @@ const useLoginStore = create(
                     login: (authToken: string) => {
                         const decoded = jwtDecode<DecodedToken>(authToken)
                         set({
-                            userId: decoded.id,
+                            userId: decoded.userId,
                             email: decoded.email,
                             username: decoded.username,
                             full_name: decoded.full_name,
