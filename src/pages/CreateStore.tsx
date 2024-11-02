@@ -16,8 +16,14 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import * as yup from 'yup';
+import useLoginStore from '../store/useLoginStore';
 
 export const CreateStore = () => {
+    const { isLoggedIn, authToken } = useLoginStore();
+
+    if (!isLoggedIn) {
+        throw new Error('User is not logged in');
+    }
     const apiUrl = import.meta.env.VITE_API_URL;
     const initialValues = {
         country_id: '',
@@ -30,7 +36,9 @@ export const CreateStore = () => {
     });
 
     const [formValues, setFormValues] = useState(initialValues);
-    const [countries, setCountries] = useState<{ country_id: string; name: string; }[]>([]);
+    const [countries, setCountries] = useState<
+        { country_id: string; name: string }[]
+    >([]);
     const [error, setError] = useState<{ [key: string]: string | null }>({});
     const [success, setSuccess] = useState<string | null>(null);
     const [activeStep, setActiveStep] = useState(0);
@@ -67,10 +75,10 @@ export const CreateStore = () => {
     const handleSubmit = async () => {
         try {
             await schema.validate(formValues, { abortEarly: false });
-            const token = localStorage.getItem('token');
             await axios.post(`${apiUrl}/api/stores/`, formValues, {
                 headers: {
-                    Authorization: `Bearer ${token}`, 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
                 },
             });
             setSuccess('Store created successfully!');
@@ -79,15 +87,15 @@ export const CreateStore = () => {
             console.log(err);
             let messageError = 'An error occurred while creating the store.';
             if (axios.isAxiosError(err)) {
-                messageError =
-                    err.response?.data?.message || messageError;
-            }  else if (err instanceof yup.ValidationError) {
+                messageError = err.response?.data?.errors?.[0]?.message || err.response?.data.message || 
+                'An error occurred.';;
+            } else if (err instanceof yup.ValidationError) {
                 const validationErrors: { [key: string]: string | null } = {};
                 err.inner.forEach((error) => {
                     validationErrors[error.path as string] = error.message;
                 });
                 setError(validationErrors);
-                return; 
+                return;
             }
             setError({ general: messageError });
             setSuccess(null);
@@ -152,7 +160,10 @@ export const CreateStore = () => {
                                 <em>None</em>
                             </MenuItem>
                             {countries.map((country) => (
-                                <MenuItem key={country.country_id} value={country.country_id}>
+                                <MenuItem
+                                    key={country.country_id}
+                                    value={country.country_id}
+                                >
                                     {country.name}
                                 </MenuItem>
                             ))}
@@ -192,7 +203,6 @@ export const CreateStore = () => {
                     />
                 </Stack>
             )}
-
 
             <Stack direction='row' spacing={2} justifyContent='center'>
                 {activeStep > 0 && (

@@ -48,6 +48,7 @@ const Navbar = () => {
         try {
             console.log('logout ...');
             logout();
+            navigate('/');
         } catch (error) {
             console.error('Logout failed', error);
         }
