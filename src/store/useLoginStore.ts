@@ -8,6 +8,7 @@ interface DecodedToken {
     email: string
     username: string
     full_name: string
+    picture: string
 }
 
 interface LoginState {
@@ -17,6 +18,7 @@ interface LoginState {
     full_name: string
     authToken: string
     isLoggedIn: boolean
+    picture?: string
 }
 
 const initialState: LoginState = {
@@ -25,7 +27,7 @@ const initialState: LoginState = {
     username: '',
     full_name: '',
     authToken: '',
-    isLoggedIn: false
+    isLoggedIn: false,
 }
 
 
@@ -43,7 +45,8 @@ const useLoginStore = create(
                             username: decoded.username,
                             full_name: decoded.full_name,
                             authToken,
-                            isLoggedIn: true
+                            isLoggedIn: true,
+                            picture: decoded.picture
                         });
                     },
                     logout: () =>
