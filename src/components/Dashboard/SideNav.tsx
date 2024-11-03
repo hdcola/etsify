@@ -11,7 +11,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
@@ -79,7 +78,6 @@ export default function SideNav({ setSelectedComponent }: { setSelectedComponent
                         { text: 'Dashboard', icon: <StorefrontOutlinedIcon />, id: 'dashboard' },
                         { text: 'Items', icon: <CategoryOutlinedIcon />, id: 'items' },
                         { text: 'Orders', icon: <ListAltOutlinedIcon />, id: 'orders' },
-                        { text: 'Drafts', icon: <MailIcon />, id: 'drafts' },
                     ].map((item) => (
                         <ListItem key={item.text} disablePadding>
                             <ListItemButton onClick={() => setSelectedComponent(item.id)}>

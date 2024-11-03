@@ -59,7 +59,7 @@ const Navbar = () => {
         }
     };
     const navigateCreateStore = async () => {
-        navigate('/stores/create');
+        navigate('/stores/dashboard');
     };
 
     return (

@@ -17,6 +17,8 @@ import {
 import axios from 'axios';
 import * as yup from 'yup';
 import useLoginStore from '../store/useLoginStore';
+import { useNavigate } from 'react-router-dom';
+
 
 export const CreateStore = () => {
     const { isLoggedIn, authToken } = useLoginStore();
@@ -30,6 +32,8 @@ export const CreateStore = () => {
         name: '',
         description: '',
     };
+    
+    const navigate = useNavigate();
     const schema = yup.object().shape({
         country_id: yup.string().required('Country is Required!'),
         name: yup.string().required('Store name is Required!'),
@@ -67,7 +71,6 @@ export const CreateStore = () => {
         }
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
-
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
@@ -82,7 +85,9 @@ export const CreateStore = () => {
                 },
             });
             setSuccess('Store created successfully!');
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             setError({});
+            navigate('/stores/dashboard');
         } catch (err) {
             console.log(err);
             let messageError = 'An error occurred while creating the store.';

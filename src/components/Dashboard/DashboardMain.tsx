@@ -167,33 +167,13 @@ export default function DashboardMain() {
                                         color='text.secondary'
                                         sx={{ mt: 2 }}
                                     >
-                                        Logo Image (JPG, GIF, PNG, min
-                                        500x500px, max 10 MB)
+                                        Logo Image (JPG, GIF, PNG, max 10 MB)
                                     </Typography>
                                     <Button
                                         variant='contained'
                                         component='label'
                                     >
                                         Upload Logo
-                                        <input
-                                            type='file'
-                                            hidden
-                                            accept='.jpg,.gif,.png'
-                                        />
-                                    </Button>
-                                    <Typography
-                                        variant='body2'
-                                        color='text.secondary'
-                                        sx={{ mt: 2 }}
-                                    >
-                                        Banner Image (JPG, GIF, PNG, 760x100px,
-                                        max 2 MB)
-                                    </Typography>
-                                    <Button
-                                        variant='contained'
-                                        component='label'
-                                    >
-                                        Upload Banner
                                         <input
                                             type='file'
                                             hidden
@@ -217,7 +197,7 @@ export default function DashboardMain() {
                     ) : (
                         <>
                         
-                        <Typography
+                    <Typography
                         variant='body2'
                         color='text.secondary'
                         sx={{ mt: 2 }}>
