@@ -194,7 +194,11 @@ const Navbar = () => {
                                 Sell on etsify
                             </MenuItem>
                             <Divider />
-                            <MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    navigate('/settings');
+                                }}
+                            >
                                 <ListItemIcon>
                                     <Settings fontSize="small" />
                                 </ListItemIcon>
