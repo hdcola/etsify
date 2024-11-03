@@ -152,39 +152,39 @@ export default function DashboardMain() {
                     {store ? (
                         <>
                             <Card sx={{ display: 'flex', maxWidth: 600 }}>
-                                <Stack direction='row' spacing={2}>
+                                <Stack direction="row" spacing={2}>
                                     <CardMedia
-                                        component='img'
+                                        component="img"
                                         image={store.logo_url || defaultLogoUrl}
-                                        alt=''
+                                        alt=""
                                     />
                                 </Stack>
 
                                 <CardContent sx={{ flex: 1 }}>
                                     <Grid
                                         container
-                                        alignItems='center'
-                                        justifyContent='space-between'
+                                        alignItems="center"
+                                        justifyContent="space-between"
                                     >
                                         <Typography
-                                            variant='caption'
-                                            color='text.secondary'
+                                            variant="caption"
+                                            color="text.secondary"
                                         >
                                             Store Name
                                         </Typography>
                                         <IconButton
-                                            size='small'
-                                            aria-label='edit'
+                                            size="small"
+                                            aria-label="edit"
                                             onClick={handleOpen}
                                         >
-                                            <EditIcon fontSize='small' />
+                                            <EditIcon fontSize="small" />
                                         </IconButton>
                                     </Grid>
 
                                     <Typography
                                         gutterBottom
-                                        variant='h5'
-                                        component='div'
+                                        variant="h5"
+                                        component="div"
                                     >
                                         {store.name}
                                     </Typography>
@@ -194,16 +194,16 @@ export default function DashboardMain() {
                                             fontSize: '10px',
                                             color: 'text.secondary',
                                         }}
-                                        variant='caption'
-                                        color='text.secondary'
-                                        display='block'
+                                        variant="caption"
+                                        color="text.secondary"
+                                        display="block"
                                         gutterBottom
                                     >
                                         Store Description
                                     </Typography>
                                     <Typography
-                                        variant='body2'
-                                        color='text.secondary'
+                                        variant="body2"
+                                        color="text.secondary"
                                     >
                                         {store.description}
                                     </Typography>
@@ -222,58 +222,61 @@ export default function DashboardMain() {
                                 </DialogTitle>
                                 <DialogContent>
                                     {error.general && (
-                                        <Typography color='error'>
+                                        <Typography color="error">
                                             {error.general}
                                         </Typography>
                                     )}
                                     {success && (
-                                        <Typography color='success.main'>
+                                        <Typography color="success.main">
                                             {success}
                                         </Typography>
                                     )}
                                     <TextField
                                         autoFocus
-                                        margin='dense'
-                                        label='Store Name'
-                                        type='text'
-                                        name='name'
+                                        margin="dense"
+                                        label="Store Name"
+                                        type="text"
+                                        name="name"
                                         value={formValues.name}
                                         onChange={handleChange}
                                         error={!!error.name}
                                         helperText={error.name || ''}
                                         fullWidth
-                                        variant='outlined'
+                                        variant="outlined"
                                     />
                                     <TextField
-                                        margin='dense'
-                                        label='Store Description'
-                                        type='text'
-                                        name='description'
+                                        margin="dense"
+                                        label="Store Description"
+                                        type="text"
+                                        name="description"
                                         value={formValues.description}
                                         onChange={handleChange}
                                         error={!!error.description}
                                         helperText={error.description || ''}
                                         fullWidth
-                                        variant='outlined'
+                                        variant="outlined"
                                         multiline
                                         rows={5}
                                     />
                                     <Typography
-                                        variant='body2'
-                                        color='text.secondary'
+                                        variant="body2"
+                                        color="text.secondary"
                                         sx={{ mt: 2 }}
                                     >
                                         Logo Image (JPG, GIF, PNG, max 10 MB)
                                     </Typography>
+                                    {logoFile && (
+                                        <Typography>{logoFile.name}</Typography>
+                                    )}
                                     <Button
-                                        variant='contained'
-                                        component='label'
+                                        variant="contained"
+                                        component="label"
                                     >
                                         Upload Logo
                                         <input
-                                            type='file'
+                                            type="file"
                                             hidden
-                                            accept='.jpg,.gif,.png'
+                                            accept=".jpg,.gif,.png"
                                             onChange={(e) => {
                                                 if (e.target.files) {
                                                     setLogoFile(
@@ -305,7 +308,7 @@ export default function DashboardMain() {
                                 </DialogContent>
                                 <DialogActions>
                                     <Button onClick={handleClose}>Close</Button>
-                                    <Button variant='contained' type='submit'>
+                                    <Button variant="contained" type="submit">
                                         Save
                                     </Button>
                                 </DialogActions>
@@ -322,12 +325,12 @@ export default function DashboardMain() {
                             </Typography>*/}
 
                             <Button
-                                variant='contained'
+                                variant="contained"
                                 onClick={navigateCreateStore}
                             >
                                 Create a store
                                 <StorefrontOutlinedIcon
-                                    fontSize='small'
+                                    fontSize="small"
                                     sx={{ ml: 1 }}
                                 />
                             </Button>
