@@ -145,7 +145,6 @@ export default function DashboardMain() {
                                 <Stack direction='row' spacing={2}>
                                     <CardMedia
                                         component='img'
-                                        sx={{ width: 150 }}
                                         image={store.logo_url || defaultLogoUrl}
                                         alt=''
                                     />
@@ -247,7 +246,7 @@ export default function DashboardMain() {
                                         fullWidth
                                         variant='outlined'
                                         multiline
-                                        rows={3}
+                                        rows={5}
                                     />
                                     <Typography
                                         variant='body2'

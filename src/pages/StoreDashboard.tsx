@@ -20,9 +20,9 @@ export const StoreDashboard = () => {
     };
 
     return (
-        <Stack sx={{ width: '100vw', height: '100vh' }}>
+        <Stack>
             <SideNav setSelectedComponent={setSelectedComponent} />
-            <Box sx={{ flexGrow: 1, p: 3 }}>
+            <Box>
                 {renderContent()}
             </Box>
         </Stack>
