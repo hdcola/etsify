@@ -1,4 +1,4 @@
-import { IconButton, Fab } from '@mui/material';
+import { Fab } from '@mui/material';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useState } from 'react';
@@ -12,35 +12,34 @@ interface Props {
 }
 
 const FavoriteFab = (props: Props) => {
-    const [itemId, setanItemId] = useState<string | number>(props.itemId);
+    const [itemId, setItemId] = useState<string | number>(props.itemId);
     const [isFavorite, setIsFavorite] = useState<boolean>(props.favorite);
 
     const handleClick = async () => {
-        console.log(itemId);
-        setanItemId(itemId);
+        setItemId(itemId);
         setIsFavorite((prev) => !prev);
     };
 
     return (
-        <IconButton
+        <Fab
+            size={props.size}
             onClick={handleClick}
             sx={{
                 position: 'absolute',
                 right: 5,
                 top: 5,
+                bgcolor: 'rgba(255, 255, 255, 0.5)',
             }}
         >
-            <Fab size={props.size}>
-                {isFavorite ? (
-                    <FavoriteBorderOutlinedIcon
-                        fontSize={props.size}
-                        color="error"
-                    />
-                ) : (
-                    <FavoriteIcon fontSize={props.size} color="error" />
-                )}
-            </Fab>
-        </IconButton>
+            {isFavorite ? (
+                <FavoriteBorderOutlinedIcon
+                    fontSize={props.size}
+                    color="error"
+                />
+            ) : (
+                <FavoriteIcon fontSize={props.size} color="error" />
+            )}
+        </Fab>
     );
 };
 
