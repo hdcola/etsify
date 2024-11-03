@@ -96,7 +96,7 @@ export const OrdersTable = () => {
                 initialState={{ pagination: { paginationModel } }}
                 pageSizeOptions={[5, 10]}
                 checkboxSelection
-                onCellClick={(params, event) => {
+                onCellClick={(_, event) => {
                     if (event.target instanceof HTMLInputElement) {
                         event.stopPropagation();
                     }
