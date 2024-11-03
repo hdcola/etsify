@@ -78,9 +78,12 @@ export default function ManageItems() {
                     Authorization: `Bearer ${authToken}`,
                 },
             });
+            
+            setSuccess('Item created successfully! Close the window');
+            setError({});
         } catch (err) {
             let messageError =
-                'An error occurred while editing store information.';
+                'An error occurred while creating an item.';
             if (axios.isAxiosError(err)) {
                 messageError =
                     err.response?.data?.message || 'An error occurred.';

@@ -79,7 +79,7 @@ export default function DashboardMain() {
     };
 
     const defaultLogoUrl = import.meta.env.VITE_DEFAULT_LOGO_URL;
- 
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -88,33 +88,43 @@ export default function DashboardMain() {
             const formData = new FormData();
             formData.append('name', formValues.name);
             formData.append('description', formValues.description);
-    
+
             if (logoFile) {
                 formData.append('file', logoFile);
             }
-            const uploadResponse = await axios.post(`${apiUrl}/api/files/upload`, formData, {
-                headers: {
-                    Authorization: `Bearer ${authToken}`,
-                    'Content-Type': 'multipart/form-data',
+
+            const uploadResponse = logoFile
+                ? await axios.post(`${apiUrl}/api/files/upload`, formData, {
+                      headers: {
+                          Authorization: `Bearer ${authToken}`,
+                          'Content-Type': 'multipart/form-data',
+                      },
+                  })
+                : null;
+
+            const logoUrl = uploadResponse
+                ? uploadResponse.data.url
+                : store?.logo_url;
+            await axios.put(
+                `${apiUrl}/api/stores`,
+                {
+                    name: formValues.name,
+                    description: formValues.description,
+                    logo_url: logoUrl,
                 },
-            });
-            console.log('Upload Response:', uploadResponse.data.url);
-            await axios.put(`${apiUrl}/api/stores`, {
-                name: formValues.name,
-                description: formValues.description,
-                logo_url: uploadResponse.data.url, 
-            }, {
-                headers: {
-                    Authorization: `Bearer ${authToken}`,
-                },
-            });
+                {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                }
+            );
             setSuccess('Store updated successfully! Close the window');
             setError({});
             setStore((prevStore) => ({
                 ...prevStore,
                 name: formValues.name,
                 description: formValues.description,
-                logo_url: uploadResponse.data.url,
+                logo_url: logoUrl,
             }));
         } catch (err) {
             let messageError =
@@ -273,7 +283,7 @@ export default function DashboardMain() {
                                             }}
                                         />
                                     </Button>
-                                   {/* <Typography
+                                    {/* <Typography
                                         variant='body2'
                                         color='text.secondary'
                                         sx={{ mt: 2 }}
