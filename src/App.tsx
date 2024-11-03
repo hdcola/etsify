@@ -47,7 +47,7 @@ function App() {
     const [server, setServer] = useState<IServer>({});
     const [cartCount, setCartCount] = useState<number>(0);
 
-    const { authToken, logout } = useLoginStore();
+    const { authToken, logout, isLoggedIn } = useLoginStore();
 
     // Use useQuery when making your api request.
     const queryClient = new QueryClient({
@@ -65,12 +65,18 @@ function App() {
 
     // Setup server
     useLayoutEffect(() => {
-        setServer({
-            apiUrl: import.meta.env.VITE_API_URL,
-            authToken: authToken,
-        });
-        setIsInit(true);
-    }, []);
+        if (isLoggedIn) {
+            setServer({
+                apiUrl: import.meta.env.VITE_API_URL,
+                authToken: authToken,
+            });
+            setIsInit(true);
+        } else {
+            setCartCount(0);
+            setServer({ apiUrl: server.apiUrl });
+            setIsInit(false);
+        }
+    }, [isLoggedIn]);
 
     return (
         <>

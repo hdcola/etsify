@@ -3,12 +3,12 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
 function useCartCount() {
-    const { server, isInit, setCartCount } = useAppContext();
+    const { server, isInit, cartCount, setCartCount } = useAppContext();
 
     useQuery({
         queryKey: ['cartCount'],
         queryFn: async () => {
-            if (server.authToken !== null) {
+            if (server.authToken !== '') {
                 return axios.get(`${server.apiUrl}/api/carts/count`, {
                     headers: { Authorization: `Bearer ${server.authToken}` },
                 }).then(res => {
@@ -21,6 +21,7 @@ function useCartCount() {
             else {
                 setCartCount(0);
             }
+            return cartCount;
         },
         enabled: isInit
     });
