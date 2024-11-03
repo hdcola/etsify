@@ -23,6 +23,7 @@ import { CreateStore } from './pages/CreateStore';
 import { StoreDashboard } from './pages/StoreDashboard';
 import { Elements } from '@stripe/react-stripe-js';
 import { TestPage } from './pages/TestPage';
+import { AccountSetting } from './pages/AccountSetting';
 import Cart from './pages/Cart';
 
 import useLoginStore from './store/useLoginStore';
@@ -118,6 +119,10 @@ function App() {
                                     <Route
                                         path="/stores/dashboard"
                                         element={<StoreDashboard />}
+                                    />
+                                    <Route
+                                        path="/settings"
+                                        element={<AccountSetting />}
                                     />
                                     <Route path="/cart" element={<Cart />} />
                                     <Route
