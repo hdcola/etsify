@@ -41,7 +41,7 @@ export default function ManageItems() {
     useEffect(() => {
         const fetchItemsData = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/api/items`, {
+                const response = await axios.get(`${apiUrl}/api/stores/items`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
                     },
@@ -73,7 +73,7 @@ export default function ManageItems() {
         event.preventDefault();
         try {
             await schema.validate(formValues, { abortEarly: false });
-            await axios.post(`${apiUrl}/api/items/add`, formValues, {
+            await axios.post(`${apiUrl}/api/stores/items`, formValues, {
                 headers: {
                     Authorization: `Bearer ${authToken}`,
                 },
