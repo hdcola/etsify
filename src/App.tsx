@@ -23,6 +23,7 @@ import { CreateStore } from './pages/CreateStore';
 import { StoreDashboard } from './pages/StoreDashboard';
 import { Elements } from '@stripe/react-stripe-js';
 import { TestPage } from './pages/TestPage';
+import Cart from './pages/Cart';
 
 import useLoginStore from './store/useLoginStore';
 
@@ -44,6 +45,7 @@ function App() {
 
     const [isInit, setIsInit] = useState<boolean>(false);
     const [server, setServer] = useState<IServer>({});
+    const [cartCount, setCartCount] = useState<number>(0);
 
     const { authToken, logout } = useLoginStore();
 
@@ -72,7 +74,9 @@ function App() {
         <>
             <CssBaseline />
             <Container sx={{ height: '100%' }} disableGutters={lessThanXL}>
-                <AppContext.Provider value={{ isInit, server }}>
+                <AppContext.Provider
+                    value={{ isInit, server, cartCount, setCartCount }}
+                >
                     <QueryClientProvider client={queryClient}>
                         <Router>
                             <Navbar />
@@ -107,6 +111,7 @@ function App() {
                                         path="/stores/dashboard"
                                         element={<StoreDashboard />}
                                     />
+                                    <Route path="/cart" element={<Cart />} />
                                     <Route
                                         path="/test"
                                         element={<TestPage />}
