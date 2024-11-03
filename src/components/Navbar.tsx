@@ -29,12 +29,16 @@ import SearchBar from './SearchBar';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import useLoginStore from '../store/useLoginStore';
+import { useAppContext } from '../App';
+import useCartCount from '../hooks/useCartCount';
 
 const Navbar = () => {
+    const { cartCount } = useAppContext();
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const { isLoggedIn, logout, username, picture } = useLoginStore();
+    useCartCount();
 
     const navigate = useNavigate();
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -120,9 +124,14 @@ const Navbar = () => {
                                 <FavoriteBorderOutlinedIcon />
                             </IconButton>
                             <IconButton>
-                                <Badge badgeContent={4} color="primary">
-                                    <ShoppingCartOutlinedIcon />
-                                </Badge>
+                                <Link to="/cart">
+                                    <Badge
+                                        badgeContent={cartCount}
+                                        color="primary"
+                                    >
+                                        <ShoppingCartOutlinedIcon />
+                                    </Badge>
+                                </Link>
                             </IconButton>
                             {isLoggedIn ? (
                                 <IconButton onClick={handleClick}>
