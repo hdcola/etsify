@@ -1,3 +1,5 @@
+import { OrdersTable } from './OrdersTable';
+
 export default function ManageOrders() {
-    return <div>Manage Orders Component</div>;
+    return <OrdersTable />;
 }
