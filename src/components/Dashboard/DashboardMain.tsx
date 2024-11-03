@@ -64,8 +64,9 @@ export default function DashboardMain() {
         navigate('/stores/create');
     };
 
-    const defaultLogoUrl = 'https://etsifybucket.s3.us-east-1.amazonaws.com/default-store-350x350.jpg'; // TODO: add to the .env
-    
+    const defaultLogoUrl =
+        'https://etsifybucket.s3.us-east-1.amazonaws.com/default-store-350x350.jpg'; // TODO: add to the .env
+
     return (
         <Grid container spacing={2}>
             {isLoggedIn ? (
@@ -73,15 +74,15 @@ export default function DashboardMain() {
                     {store ? (
                         <>
                             <Card sx={{ display: 'flex', maxWidth: 600 }}>
-                            <Stack direction="row" spacing={2}>
-                                <CardMedia
-                                    component='img'
-                                    sx={{ width: 150, height: 150 }}
-                                    image={store.logo_url || defaultLogoUrl}
-                                    alt=''
-                                />
+                                <Stack direction='row' spacing={2}>
+                                    <CardMedia
+                                        component='img'
+                                        sx={{ width: 150, height: 150 }}
+                                        image={store.logo_url || defaultLogoUrl}
+                                        alt=''
+                                    />
                                 </Stack>
-                                
+
                                 <CardContent sx={{ flex: 1 }}>
                                     <Grid
                                         container
@@ -196,20 +197,17 @@ export default function DashboardMain() {
                         </>
                     ) : (
                         <>
-                        
-                    <Typography
-                        variant='body2'
-                        color='text.secondary'
-                        sx={{ mt: 2 }}>
-                            There is no store.
-                    </Typography>
-                        
-                        
-                        <Button onClick={navigateCreateStore}>
-                            <StorefrontOutlinedIcon fontSize="small" />
-                        Sell on etsify
-                    </Button>
-                    </>
+                            <Button
+                                variant='contained'
+                                onClick={navigateCreateStore}
+                            >
+                                Create a store
+                                <StorefrontOutlinedIcon
+                                    fontSize='small'
+                                    sx={{ ml: 1 }}
+                                />
+                            </Button>
+                        </>
                     )}
                 </>
             ) : (
