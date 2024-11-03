@@ -1,5 +1,10 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+    QueryCache,
+    QueryClient,
+    QueryClientProvider,
+} from '@tanstack/react-query';
+import { useState, createContext, useLayoutEffect, useContext } from 'react';
 
 import { loadStripe } from '@stripe/stripe-js';
 import './App.css';
@@ -19,64 +24,106 @@ import { StoreDashboard } from './pages/StoreDashboard';
 import { Elements } from '@stripe/react-stripe-js';
 import { TestPage } from './pages/TestPage';
 
+import useLoginStore from './store/useLoginStore';
+
 const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 const stripePromise = loadStripe(stripePublicKey);
+
+// Globally pass anything to other files
+const AppContext = createContext({} as any);
+// Import this in files
+export const useAppContext = () => useContext(AppContext);
 
 function App() {
     const theme = useTheme();
     const lessThanXL = useMediaQuery(theme.breakpoints.down('xl'));
-    const queryClient = new QueryClient();
     const appearance: { theme: 'stripe' | 'night' | 'flat' | undefined } = {
         theme: 'stripe',
     };
     const loader = 'auto';
 
+    const [isInit, setIsInit] = useState<boolean>(false);
+    const [server, setServer] = useState<IServer>({});
+
+    const { authToken, logout } = useLoginStore();
+
+    // Use useQuery when making your api request.
+    const queryClient = new QueryClient({
+        queryCache: new QueryCache({
+            onError: (error: unknown) => {
+                if (error.status === 403) {
+                    console.log('<< Unauthorized >>');
+                    logout();
+                }
+            },
+        }),
+    });
+
+    // Setup server
+    useLayoutEffect(() => {
+        setServer({
+            apiUrl: import.meta.env.VITE_API_URL,
+            authToken: authToken,
+        });
+        setIsInit(true);
+    }, []);
+
     return (
         <>
             <CssBaseline />
             <Container sx={{ height: '100%' }} disableGutters={lessThanXL}>
-                <QueryClientProvider client={queryClient}>
-                    <Router>
-                        <Navbar />
-                        <Elements
-                            options={{ appearance, loader }}
-                            stripe={stripePromise}
-                        >
-                            <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route
-                                    path="/items/:id"
-                                    element={<SingleItem />}
-                                />
-                                <Route
-                                    path="/register"
-                                    element={<Register />}
-                                />
-                                <Route path="/login" element={<Login />} />
-                                <Route
-                                    path="/checkout"
-                                    element={<CheckoutPage />}
-                                />
-                                <Route
-                                    path="/complete"
-                                    element={<CompletePage />}
-                                />
-                                <Route
-                                    path="/stores/create"
-                                    element={<CreateStore />}
-                                />
-                                <Route
-                                    path="/stores/dashboard"
-                                    element={<StoreDashboard />}
-                                />
-                                <Route path="/test" element={<TestPage />} />
-                            </Routes>
-                        </Elements>
-                    </Router>
-                </QueryClientProvider>
+                <AppContext.Provider value={{ isInit, server }}>
+                    <QueryClientProvider client={queryClient}>
+                        <Router>
+                            <Navbar />
+                            <Elements
+                                options={{ appearance, loader }}
+                                stripe={stripePromise}
+                            >
+                                <Routes>
+                                    <Route path="/" element={<Home />} />
+                                    <Route
+                                        path="/items/:id"
+                                        element={<SingleItem />}
+                                    />
+                                    <Route
+                                        path="/register"
+                                        element={<Register />}
+                                    />
+                                    <Route path="/login" element={<Login />} />
+                                    <Route
+                                        path="/checkout"
+                                        element={<CheckoutPage />}
+                                    />
+                                    <Route
+                                        path="/complete"
+                                        element={<CompletePage />}
+                                    />
+                                    <Route
+                                        path="/stores/create"
+                                        element={<CreateStore />}
+                                    />
+                                    <Route
+                                        path="/stores/dashboard"
+                                        element={<StoreDashboard />}
+                                    />
+                                    <Route
+                                        path="/test"
+                                        element={<TestPage />}
+                                    />
+                                </Routes>
+                            </Elements>
+                        </Router>
+                    </QueryClientProvider>
+                </AppContext.Provider>
             </Container>
         </>
     );
+}
+
+interface IServer {
+    apiUrl?: string;
+    authToken?: string;
 }
 
 export default App;
