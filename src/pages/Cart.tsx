@@ -16,6 +16,9 @@ import { useState, useEffect } from 'react';
 import { useAppContext } from '../App';
 import NumberCounter from '../components/NumberCounter';
 import useCartCount from '../hooks/useCartCount';
+import { useNavigate } from 'react-router-dom';
+import useGetCartItems from '../api/useGetCartItems';
+import type { IItem } from '../api/useGetCartItems';
 
 const CartItem = ({ refreshCart, removeItem, itemData }: Props) => {
     const { server } = useAppContext();
@@ -124,28 +127,10 @@ const CartItem = ({ refreshCart, removeItem, itemData }: Props) => {
 
 const Cart = () => {
     const { isInit, server, setCartCount } = useAppContext();
-    const [items, setItems] = useState<IItem[]>([]);
-    const [checkout, setCheckout] = useState<ICheckout>({} as ICheckout);
     useCartCount();
+    const navigate = useNavigate();
 
-    const { refetch } = useQuery({
-        queryKey: ['cart'],
-        queryFn: async () => {
-            return axios
-                .get(`${server.apiUrl}/api/carts`, {
-                    headers: { Authorization: `Bearer ${server.authToken}` },
-                })
-                .then((res) => {
-                    if (res.status === 200) {
-                        setItems(res.data.items);
-                        setCheckout(res.data.checkout);
-                        return res.data;
-                    }
-                    return items;
-                });
-        },
-        enabled: isInit,
-    });
+    const { refetch, data: { items, checkout } = {} } = useGetCartItems(isInit);
 
     const handleRemove = (itemId: number) => {
         axios
@@ -154,10 +139,6 @@ const Cart = () => {
             })
             .then((res) => {
                 if (res.status === 204) {
-                    const newItems = items.filter(
-                        (item) => item.item_id !== itemId
-                    );
-                    setItems(newItems);
                     setCartCount((prev: number) => prev - 1);
                     refetch();
                 }
@@ -173,7 +154,7 @@ const Cart = () => {
                             Your cart
                         </Typography>
                         <Stack spacing={2}>
-                            {items.map((item) => {
+                            {items?.map((item) => {
                                 return (
                                     <CartItem
                                         key={item.item_id}
@@ -198,7 +179,7 @@ const Cart = () => {
                                     Item(s) total
                                 </Typography>
                                 <Typography variant="body1">
-                                    CA${checkout.itemsTotal}
+                                    CA${checkout?.itemsTotal}
                                 </Typography>
                             </Stack>
                             {/* Shop discount */}
@@ -210,7 +191,7 @@ const Cart = () => {
                                     Shop discount
                                 </Typography>
                                 <Typography variant="body1">
-                                    - CA${checkout.shopDiscount}
+                                    - CA${checkout?.shopDiscount}
                                 </Typography>
                             </Stack>
                             <Divider />
@@ -223,7 +204,7 @@ const Cart = () => {
                                     Subtotal
                                 </Typography>
                                 <Typography variant="body1">
-                                    CA${checkout.subtotal}
+                                    CA${checkout?.subtotal}
                                 </Typography>
                             </Stack>
                             {/* Shipping */}
@@ -235,7 +216,7 @@ const Cart = () => {
                                     Shipping
                                 </Typography>
                                 <Typography variant="body1">
-                                    CA${checkout.shipping}
+                                    CA${checkout?.shipping}
                                 </Typography>
                             </Stack>
                             <Divider />
@@ -245,10 +226,10 @@ const Cart = () => {
                                 justifyContent="space-between"
                             >
                                 <Typography fontWeight={'bold'}>
-                                    Total ({items.length} items)
+                                    Total ({items?.length} items)
                                 </Typography>
                                 <Typography variant="body1" fontWeight={'bold'}>
-                                    CA${checkout.total}
+                                    CA${checkout?.total}
                                 </Typography>
                             </Stack>
                         </Stack>
@@ -258,6 +239,9 @@ const Cart = () => {
                             fullWidth
                             sx={{
                                 borderRadius: 50,
+                            }}
+                            onClick={() => {
+                                navigate('/checkout');
                             }}
                         >
                             Checkout
@@ -271,48 +255,8 @@ const Cart = () => {
 
 interface Props {
     itemData: IItem;
-    removeItem: Function;
-    refreshCart: Function;
-}
-
-interface IItem {
-    item_id: number;
-    image_url?: string;
-    name: string;
-    description?: string;
-    price: number;
-    quantity: number;
-    store: IStore;
-    carts_items: ICartsItems;
-}
-
-interface ICartsItems {
-    quantity: number;
-    discount_percent: number | null;
-}
-
-interface IStore {
-    store_id: number;
-    name: string;
-    description?: string;
-    rating: number;
-    logo_url?: string;
-    image_url?: string;
-    country: ICountry;
-}
-
-interface ICountry {
-    country_id: number;
-    name: string;
-    code: string;
-}
-
-interface ICheckout {
-    itemsTotal: number;
-    shopDiscount: number;
-    subtotal: number;
-    shipping: number;
-    total: number;
+    removeItem: (itemId: number) => void;
+    refreshCart: () => void;
 }
 
 export default Cart;
