@@ -52,10 +52,12 @@ function App() {
     // Use useQuery when making your api request.
     const queryClient = new QueryClient({
         queryCache: new QueryCache({
-            onError: (error: unknown) => {
-                if (error.status === 403) {
-                    console.log('<< Unauthorized >>');
-                    logout();
+            onError: (error: { status?: number } | Error | unknown) => {
+                if (typeof error === 'object' && error && 'status' in error) {
+                    if (error.status === 403) {
+                        console.log('<< Unauthorized >>');
+                        logout();
+                    }
                 }
             },
         }),
