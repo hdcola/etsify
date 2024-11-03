@@ -1,12 +1,21 @@
 import { Elements, useStripe } from '@stripe/react-stripe-js';
 import { useStripeClientSecret } from '../api/useStripeClientSecret';
 import { CheckoutForm } from '../components/CheckoutForm';
+import useGetCartItems from '../api/useGetCartItems';
 
 export const CheckoutPage = () => {
-    const items = [
-        { id: 'M4 MacBook Pro', amount: 20000 },
-        { id: 'M1 MacBook Air', amount: 10000 },
-    ];
+    const { data: { items: cartItem, checkout } = {} } = useGetCartItems(true);
+    console.log(cartItem);
+    console.log(checkout);
+
+    const items = cartItem
+        ? cartItem.map((item) => {
+              return {
+                  id: item.name,
+                  amount: Number(item.price) * item.quantity * 100,
+              };
+          })
+        : [];
 
     const stripe = useStripe();
 
