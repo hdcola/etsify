@@ -6,7 +6,6 @@ import {
     Avatar,
     Box,
     Button,
-    Divider,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useQuery } from '@tanstack/react-query';
@@ -19,6 +18,7 @@ import useCartCount from '../hooks/useCartCount';
 import { useNavigate } from 'react-router-dom';
 import useGetCartItems from '../api/useGetCartItems';
 import type { IItem } from '../api/useGetCartItems';
+import { CheckoutInfo } from '../components/CheckoutInfo';
 
 const CartItem = ({ refreshCart, removeItem, itemData }: Props) => {
     const { server } = useAppContext();
@@ -170,68 +170,10 @@ const Cart = () => {
                 <Grid size={{ xs: 12, md: 4 }}>
                     <Box padding={3} mx={1}>
                         <Stack spacing={1} mb={3}>
-                            {/* Items total */}
-                            <Stack
-                                direction="row"
-                                justifyContent="space-between"
-                            >
-                                <Typography variant="body1">
-                                    Item(s) total
-                                </Typography>
-                                <Typography variant="body1">
-                                    CA${checkout?.itemsTotal}
-                                </Typography>
-                            </Stack>
-                            {/* Shop discount */}
-                            <Stack
-                                direction="row"
-                                justifyContent="space-between"
-                            >
-                                <Typography variant="body1">
-                                    Shop discount
-                                </Typography>
-                                <Typography variant="body1">
-                                    - CA${checkout?.shopDiscount}
-                                </Typography>
-                            </Stack>
-                            <Divider />
-                            {/* Subtotal */}
-                            <Stack
-                                direction="row"
-                                justifyContent="space-between"
-                            >
-                                <Typography variant="body1">
-                                    Subtotal
-                                </Typography>
-                                <Typography variant="body1">
-                                    CA${checkout?.subtotal}
-                                </Typography>
-                            </Stack>
-                            {/* Shipping */}
-                            <Stack
-                                direction="row"
-                                justifyContent="space-between"
-                            >
-                                <Typography variant="body1">
-                                    Shipping
-                                </Typography>
-                                <Typography variant="body1">
-                                    CA${checkout?.shipping}
-                                </Typography>
-                            </Stack>
-                            <Divider />
-                            {/* Total */}
-                            <Stack
-                                direction="row"
-                                justifyContent="space-between"
-                            >
-                                <Typography fontWeight={'bold'}>
-                                    Total ({items?.length} items)
-                                </Typography>
-                                <Typography variant="body1" fontWeight={'bold'}>
-                                    CA${checkout?.total}
-                                </Typography>
-                            </Stack>
+                            <CheckoutInfo
+                                checkout={checkout}
+                                itemsCount={items?.length ?? 0}
+                            />
                         </Stack>
                         <Button
                             variant="contained"
