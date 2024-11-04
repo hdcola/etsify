@@ -71,12 +71,11 @@ function App() {
                 apiUrl: import.meta.env.VITE_API_URL,
                 authToken: authToken,
             });
-            setIsInit(true);
         } else {
             setCartCount(0);
             setServer({ apiUrl: server.apiUrl });
-            setIsInit(false);
         }
+        setIsInit(true);
     }, [isLoggedIn]);
 
     return (

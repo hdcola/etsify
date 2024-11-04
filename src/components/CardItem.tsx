@@ -16,7 +16,7 @@ interface Props {
 
 const CardItem = ({ cardData }: Props) => {
     return (
-        <Box position={'relative'} width={275} height={275}>
+        <Box position={'relative'} height={275}>
             <FavoriteFab
                 itemId={cardData.item_id}
                 favorite={true}
@@ -28,10 +28,12 @@ const CardItem = ({ cardData }: Props) => {
                     ':hover': { boxShadow: 1 },
                     positon: 'relative',
                     borderColor: '#eeeeee',
+                    width: '100%',
                 }}
             >
                 <Link to={`/items/${cardData.item_id}`}>
                     <CardMedia
+                        component="img"
                         sx={{ height: 150 }}
                         image={cardData.image_url}
                     />

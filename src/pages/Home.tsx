@@ -10,11 +10,14 @@ export const Home = () => {
 
     if (!isLoading)
         return (
-            <Grid container spacing={1}>
+            <Grid container spacing={2} px={1}>
                 {items?.map((item: IItem) => {
                     return (
-                        <Grid size={{ xs: 6, md: 2, lg: 3 }}>
-                            <CardItem key={item.item_id} cardData={item} />
+                        <Grid
+                            key={item.item_id}
+                            size={{ xs: 12, sm: 6, md: 3 }}
+                        >
+                            <CardItem cardData={item} />
                         </Grid>
                     );
                 })}

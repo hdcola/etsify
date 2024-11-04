@@ -11,7 +11,6 @@ import Grid from '@mui/material/Grid2';
 import { useParams } from 'react-router-dom';
 import FavoriteFab from '../components/FavoriteFab';
 import { useAppContext } from '../App';
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -64,8 +63,10 @@ const SingleItem = () => {
         queryKey: ['addCart'],
         queryFn: async () => {
             return axios
-                .post(`${server.apiUrl}/api/carts/${params.id}`, {
-                    headers: { Authorization: `Bearer ${server.authToken}` },
+                .post(`${server.apiUrl}/api/carts/${params.id}`, null, {
+                    headers: {
+                        Authorization: `Bearer ${server.authToken}`,
+                    },
                 })
                 .then((res) => {
                     if (res.status === 200) {
@@ -80,23 +81,17 @@ const SingleItem = () => {
         refetch();
     };
 
-    console.log('test', item);
-    if (isLoading) {
-        console.log('hello?');
+    if (!isLoading && item)
         return (
-            <>
-                <div>Loading</div>
-            </>
-        );
-    }
-
-    return (
-        <Grid container spacing={2}>
-            {/* <p>{data}</p> */}
-            {/* Listing image */}
-            <Grid size={{ xs: 12, md: 8 }}>
-                <Box display={'flex'} maxHeight={{ xs: 250, sm: 400, md: 500 }}>
-                    {/* <Stack
+            <Grid container spacing={2}>
+                {/* <p>{data}</p> */}
+                {/* Listing image */}
+                <Grid size={{ xs: 12, md: 8 }}>
+                    <Box
+                        display={'flex'}
+                        maxHeight={{ xs: 250, sm: 400, md: 500 }}
+                    >
+                        {/* <Stack
                         spacing={1}
                         maxWidth={64}
                         sx={{ display: { xs: 'none', md: 'block' } }}
@@ -104,125 +99,127 @@ const SingleItem = () => {
                         <Box sx={{ backgroundColor: 'red' }}>Hello world</Box>
                         <Box sx={{ backgroundColor: 'pink' }}>Hello world</Box>
                     </Stack> */}
-                    <Box
-                        width={'100%'}
-                        position={'relative'}
-                        overflow={'hidden'}
-                    >
-                        <FavoriteFab
-                            itemId={item.item_id}
-                            favorite={false}
-                            size="medium"
-                        />
                         <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                objectFit: 'cover',
-                            }}
+                            width={'100%'}
+                            position={'relative'}
+                            overflow={'hidden'}
                         >
-                            <img
-                                src={item.image_url}
-                                alt={item.name}
-                                height={'100%'}
+                            <FavoriteFab
+                                itemId={item.item_id}
+                                favorite={false}
+                                size="medium"
                             />
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    objectFit: 'cover',
+                                }}
+                            >
+                                <img
+                                    src={item.image_url}
+                                    alt={item.name}
+                                    height={'100%'}
+                                />
+                            </Box>
                         </Box>
                     </Box>
-                </Box>
-            </Grid>
-            {/* Listing information */}
-            <Grid size={{ xs: 12, md: 4 }}>
-                <Box p={{ xs: 2, md: 5 }}>
-                    <Typography
-                        variant="body1"
-                        sx={{ textTransform: 'uppercase' }}
-                        color="primary"
-                    >
-                        {item.quantity > 0 ? 'In stock' : 'Out of stock'}
-                    </Typography>
-                    <Typography variant="h5" fontWeight={'bold'} gutterBottom>
-                        CA${item.price}
-                    </Typography>
-                    <Typography variant="body1" my={2}>
-                        {item.name}
-                    </Typography>
-                    <Typography variant="body2">{item.description}</Typography>
+                </Grid>
+                {/* Listing information */}
+                <Grid size={{ xs: 12, md: 4 }}>
+                    <Box p={{ xs: 2, md: 5 }}>
+                        <Typography
+                            variant="body1"
+                            sx={{ textTransform: 'uppercase' }}
+                            color="primary"
+                        >
+                            {item.quantity > 0 ? 'In stock' : 'Out of stock'}
+                        </Typography>
+                        <Typography
+                            variant="h5"
+                            fontWeight={'bold'}
+                            gutterBottom
+                        >
+                            CA${item.price}
+                        </Typography>
+                        <Typography variant="body1" my={2}>
+                            {item.name}
+                        </Typography>
+                        <Typography variant="body2">
+                            {item.description}
+                        </Typography>
+                        <Stack
+                            spacing={1}
+                            direction="row"
+                            my={2}
+                            alignItems={'center'}
+                        >
+                            <Typography fontSize={'0.9rem'}>
+                                {item.store.name}
+                            </Typography>
+                            <Rating
+                                name="read-only"
+                                value={item.store.rating}
+                                readOnly
+                            />
+                        </Stack>
+                        <Button
+                            disabled={item.quantity === 0}
+                            onClick={handleClick}
+                            variant="contained"
+                            fullWidth
+                            sx={{ borderRadius: 50 }}
+                        >
+                            Add to cart
+                        </Button>
+                    </Box>
+                </Grid>
+                {/* Reviews */}
+                <Grid size={{ xs: 12, md: 8 }} p={2}>
                     <Stack
                         spacing={1}
                         direction="row"
-                        my={2}
+                        my={1}
                         alignItems={'center'}
                     >
-                        <Typography fontSize={'0.9rem'}>
-                            {item.store.name}
+                        <Typography variant="h6">
+                            {reviews.length} reviews
                         </Typography>
-                        <Rating
-                            name="read-only"
-                            value={item.store.rating}
-                            readOnly
-                        />
+                        <Rating name="read-only" value={5} readOnly />
                     </Stack>
-                    <Button
-                        onClick={handleClick}
-                        variant="contained"
-                        fullWidth
-                        sx={{ borderRadius: 50 }}
-                    >
-                        Add to basket
-                    </Button>
-                </Box>
-            </Grid>
-            {/* Reviews */}
-            <Grid size={{ xs: 12, md: 8 }} p={2}>
-                <Stack spacing={1} direction="row" my={1} alignItems={'center'}>
-                    <Typography variant="h6">
-                        {reviews.length} reviews
-                    </Typography>
-                    <Rating name="read-only" value={5} readOnly />
-                </Stack>
 
-                {reviews.map((review, index) => {
-                    return (
-                        <Box key={index} py={2}>
-                            <Rating
-                                name="read-only"
-                                value={review.rating}
-                                readOnly
-                            />
-                            <Typography variant="body1">
-                                {review.description}
-                            </Typography>
-                            <Stack spacing={1} direction="row">
-                                <Avatar sx={{ height: 20, width: 20 }}>
-                                    TP
-                                </Avatar>
-                                <Typography variant="body2" fontSize={'0.9rem'}>
-                                    <Link marginInlineEnd={2}>
-                                        {review.user.username}
-                                    </Link>
-                                    {review.date_created}
+                    {reviews.map((review, index) => {
+                        return (
+                            <Box key={index} py={2}>
+                                <Rating
+                                    name="read-only"
+                                    value={review.rating}
+                                    readOnly
+                                />
+                                <Typography variant="body1">
+                                    {review.description}
                                 </Typography>
-                            </Stack>
-                        </Box>
-                    );
-                })}
+                                <Stack spacing={1} direction="row">
+                                    <Avatar sx={{ height: 20, width: 20 }}>
+                                        TP
+                                    </Avatar>
+                                    <Typography
+                                        variant="body2"
+                                        fontSize={'0.9rem'}
+                                    >
+                                        <Link marginInlineEnd={2}>
+                                            {review.user.username}
+                                        </Link>
+                                        {review.date_created}
+                                    </Typography>
+                                </Stack>
+                            </Box>
+                        );
+                    })}
+                </Grid>
             </Grid>
-        </Grid>
-    );
-};
-
-const cardData = {
-    img: 'https://picsum.photos/800/450?random=1',
-    name: 'Revolutionizing software development with cutting-edge tools',
-    description:
-        'Our latest engineering tools are designed to streamline workflows and boost productivity. Discover how these innovations are transforming the software development landscape.',
-    price: '10.99',
-    quantity: 13,
-    store: {
-        name: 'Store name',
-        rating: 5,
-    },
+        );
 };
 
 const reviews = [

@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAppContext } from "../App";
 import axios from "axios";
 import useLoginStore from "../store/useLoginStore";
 
@@ -30,7 +29,9 @@ const fetchItems = async () => {
         return { items: res.data as IItem[] };
     }).catch((err) => {
         throw new Error('Failed to fetch items');
-    }) */
+    }); */
+
+
     const res = await axios.get(`${apiUrl}/api/items`, {
         headers: { Authorization: `Bearer ${authToken}` },
     });
