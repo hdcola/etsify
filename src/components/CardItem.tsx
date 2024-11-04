@@ -9,10 +9,36 @@ import {
 import { Link } from 'react-router-dom';
 import FavoriteFab from './FavoriteFab';
 
-const CardItem = () => {
+interface Props {
+    cardData: IItem;
+}
+
+interface IItem {
+    item_id: number;
+    image_url?: string;
+    name: string;
+    description?: string;
+    price: number;
+    quantity: number;
+    store: IStore;
+}
+
+interface IStore {
+    store_id: number;
+    name: string;
+    rating: number;
+    logo_url: string;
+}
+
+const CardItem = ({ cardData }: Props) => {
+    console.log('hellooooo');
     return (
         <Box position={'relative'} width={275} height={275}>
-            <FavoriteFab itemId={cardData.id} favorite={true} size="small" />
+            <FavoriteFab
+                itemId={cardData.item_id}
+                favorite={true}
+                size="small"
+            />
             <Card
                 variant="outlined"
                 sx={{
@@ -21,8 +47,11 @@ const CardItem = () => {
                     borderColor: '#eeeeee',
                 }}
             >
-                <Link to={`/items/${cardData.id}`}>
-                    <CardMedia sx={{ height: 150 }} image={cardData.img} />
+                <Link to={`/items/${cardData.item_id}`}>
+                    <CardMedia
+                        sx={{ height: 150 }}
+                        image={cardData.image_url}
+                    />
                     <CardContent>
                         <Typography
                             noWrap
@@ -61,20 +90,6 @@ const CardItem = () => {
             </Card>
         </Box>
     );
-};
-
-const cardData = {
-    id: 3,
-    img: 'https://picsum.photos/800/450?random=1',
-    name: 'Revolutionizing software development with cutting-edge tools',
-    description:
-        'Our latest engineering tools are designed to streamline workflows and boost productivity. Discover how these innovations are transforming the software development landscape.',
-    price: '10.99',
-    quantity: 13,
-    store: {
-        name: 'Store name',
-        rating: 5,
-    },
 };
 
 export default CardItem;

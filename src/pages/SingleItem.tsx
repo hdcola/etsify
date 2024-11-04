@@ -10,13 +10,89 @@ import {
 import Grid from '@mui/material/Grid2';
 import { useParams } from 'react-router-dom';
 import FavoriteFab from '../components/FavoriteFab';
+import { useAppContext } from '../App';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+interface IItem {
+    item_id: number;
+    image_url?: string;
+    name: string;
+    description?: string;
+    price: number;
+    quantity: number;
+    store: IStore;
+}
+
+interface IStore {
+    store_id: number;
+    name: string;
+    rating: number;
+    logo_url: string;
+    country: ICountry;
+    user_id: number;
+}
+
+interface ICountry {
+    country_id: number;
+    name: string;
+    code: string;
+}
 
 const SingleItem = () => {
-    const id = useParams();
-    console.log(id);
+    const { server, isInit } = useAppContext();
+    const params = useParams();
+    const navigate = useNavigate();
+
+    const { isLoading, data: item } = useQuery({
+        queryKey: ['item'],
+        queryFn: async () => {
+            return axios
+                .get(`${server.apiUrl}/api/items/${params.id}`, {
+                    headers: { Authorization: `Bearer ${server.authToken}` },
+                })
+                .then((res) => {
+                    return res.data as IItem;
+                });
+        },
+        enabled: isInit,
+    });
+
+    const { refetch } = useQuery({
+        queryKey: ['addCart'],
+        queryFn: async () => {
+            return axios
+                .post(`${server.apiUrl}/api/carts/${params.id}`, {
+                    headers: { Authorization: `Bearer ${server.authToken}` },
+                })
+                .then((res) => {
+                    if (res.status === 200) {
+                        navigate('/cart');
+                    }
+                });
+        },
+        enabled: false,
+    });
+
+    const handleClick = () => {
+        refetch();
+    };
+
+    console.log('test', item);
+    if (isLoading) {
+        console.log('hello?');
+        return (
+            <>
+                <div>Loading</div>
+            </>
+        );
+    }
 
     return (
         <Grid container spacing={2}>
+            {/* <p>{data}</p> */}
             {/* Listing image */}
             <Grid size={{ xs: 12, md: 8 }}>
                 <Box display={'flex'} maxHeight={{ xs: 250, sm: 400, md: 500 }}>
@@ -34,7 +110,7 @@ const SingleItem = () => {
                         overflow={'hidden'}
                     >
                         <FavoriteFab
-                            itemId={id.toString()}
+                            itemId={item.item_id}
                             favorite={false}
                             size="medium"
                         />
@@ -43,13 +119,12 @@ const SingleItem = () => {
                                 display: 'flex',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                bgcolor: 'green',
                                 objectFit: 'cover',
                             }}
                         >
                             <img
-                                src={cardData.img}
-                                alt={cardData.name}
+                                src={item.image_url}
+                                alt={item.name}
                                 height={'100%'}
                             />
                         </Box>
@@ -64,17 +139,15 @@ const SingleItem = () => {
                         sx={{ textTransform: 'uppercase' }}
                         color="primary"
                     >
-                        {cardData.quantity > 0 ? 'In stock' : 'Out of stock'}
+                        {item.quantity > 0 ? 'In stock' : 'Out of stock'}
                     </Typography>
                     <Typography variant="h5" fontWeight={'bold'} gutterBottom>
-                        CA${cardData.price}
+                        CA${item.price}
                     </Typography>
                     <Typography variant="body1" my={2}>
-                        {cardData.name}
+                        {item.name}
                     </Typography>
-                    <Typography variant="body2">
-                        {cardData.description}
-                    </Typography>
+                    <Typography variant="body2">{item.description}</Typography>
                     <Stack
                         spacing={1}
                         direction="row"
@@ -82,15 +155,16 @@ const SingleItem = () => {
                         alignItems={'center'}
                     >
                         <Typography fontSize={'0.9rem'}>
-                            {cardData.store.name}
+                            {item.store.name}
                         </Typography>
                         <Rating
                             name="read-only"
-                            value={cardData.store.rating}
+                            value={item.store.rating}
                             readOnly
                         />
                     </Stack>
                     <Button
+                        onClick={handleClick}
                         variant="contained"
                         fullWidth
                         sx={{ borderRadius: 50 }}
