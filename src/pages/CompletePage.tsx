@@ -3,7 +3,6 @@ import { useStripe } from '@stripe/react-stripe-js';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 import {
     Container,
     Paper,
@@ -15,8 +14,10 @@ import {
     Stack,
     Button,
     Avatar,
+    CircularProgress,
 } from '@mui/material';
 import { usePaymentCheckout } from '../api/usePaymentCheckout';
+import { useAppContext } from '../App';
 
 type StatusKey =
     | 'succeeded'
@@ -61,6 +62,8 @@ export const CompletePage = () => {
     const [status, setStatus] = useState<StatusKey>('default');
     const [intentId, setIntentId] = useState<string | null>(null);
     const { data: checkoutInfo } = usePaymentCheckout(intentId);
+    const { setCartCount } = useAppContext();
+    const [isProcessing, setIsProcessing] = useState(true);
 
     useEffect(() => {
         if (!stripe) {
@@ -85,7 +88,33 @@ export const CompletePage = () => {
         });
     }, [stripe]);
 
+    useEffect(() => {
+        if (checkoutInfo) {
+            setCartCount(0);
+            setIsProcessing(false);
+        }
+    }, [checkoutInfo, setCartCount, setIsProcessing]);
+
     const { icon: Icon, iconColor, text } = STATUS_CONTENT_MAP[status];
+
+    if (isProcessing) {
+        return (
+            <Container maxWidth="sm" sx={{ mt: 4 }}>
+                <Paper elevation={3} sx={{ p: 4 }}>
+                    <Stack spacing={3} alignItems="center">
+                        <CircularProgress size={56} />
+                        <Typography
+                            variant="h5"
+                            component="h1"
+                            textAlign="center"
+                        >
+                            Processing your payment
+                        </Typography>
+                    </Stack>
+                </Paper>
+            </Container>
+        );
+    }
 
     return (
         <Container maxWidth="sm" sx={{ mt: 4 }}>
@@ -165,7 +194,7 @@ export const CompletePage = () => {
                                                 Total
                                             </TableCell>
                                             <TableCell>
-                                                ${checkoutInfo.total.toFixed(2)}
+                                                ${checkoutInfo.total}
                                             </TableCell>
                                         </TableRow>
                                     </>
@@ -175,23 +204,8 @@ export const CompletePage = () => {
                     )}
 
                     <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                        {intentId && (
-                            <Button
-                                variant="outlined"
-                                endIcon={<OpenInNewOutlinedIcon />}
-                                href={`https://dashboard.stripe.com/payments/${intentId}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                View details
-                            </Button>
-                        )}
-                        <Button
-                            variant="contained"
-                            href="/checkout"
-                            color="primary"
-                        >
-                            Test another
+                        <Button variant="contained" href="/" color="primary">
+                            Continue Shopping
                         </Button>
                     </Stack>
                 </Stack>
