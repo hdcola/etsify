@@ -54,22 +54,21 @@ export default function ManageItems() {
     const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
-const fetchItemsData = async () => {
-            try {
-                const response = await axios.get(`${apiUrl}/api/stores/items`, {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
-                    },
-                });
-                if (response.data.success && response.data.items) {
-                    setItems(response.data.items);
-                }
-            } catch (err) {
-                console.error('Error fetching store data', err);
+    const fetchItemsData = async () => {
+        try {
+            const response = await axios.get(`${apiUrl}/api/stores/items`, {
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                },
+            });
+            if (response.data.success && response.data.items) {
+                setItems(response.data.items);
             }
-        };
+        } catch (err) {
+            console.error('Error fetching store data', err);
+        }
+    };
     useEffect(() => {
-        
         fetchItemsData();
     }, [apiUrl, authToken]);
     const openCreateItemDialog = () => {
@@ -93,7 +92,6 @@ const fetchItemsData = async () => {
         setIsEditMode(true);
         setOpen(true);
     };
-
 
     const openDeleteDialog = (item: Item) => {
         setItemToDelete(item);
@@ -195,7 +193,11 @@ const fetchItemsData = async () => {
                 setItems((prevItems) =>
                     prevItems.map((item) =>
                         item.item_id === itemToEdit.item_id
-                            ? { ...item, ...formValues, image_url: imageUrl || item.image_url}
+                            ? {
+                                  ...item,
+                                  ...formValues,
+                                  image_url: imageUrl || item.image_url,
+                              }
                             : item
                     )
                 );
@@ -206,8 +208,8 @@ const fetchItemsData = async () => {
                 await axios.post(
                     `${apiUrl}/api/stores/items`,
                     {
-                    ...formValues,
-                    image_url: imageUrl,
+                        ...formValues,
+                        image_url: imageUrl,
                     },
                     {
                         headers: {
