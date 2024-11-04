@@ -8,21 +8,35 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import FavoriteFab from './FavoriteFab';
+import type { IItem } from '../api/useGetItems';
 
-const CardItem = () => {
+interface Props {
+    cardData: IItem;
+}
+
+const CardItem = ({ cardData }: Props) => {
     return (
-        <Box position={'relative'} width={275} height={275}>
-            <FavoriteFab itemId={cardData.id} favorite={true} size="small" />
+        <Box position={'relative'} height={275}>
+            <FavoriteFab
+                itemId={cardData.item_id}
+                favorite={true}
+                size="small"
+            />
             <Card
                 variant="outlined"
                 sx={{
                     ':hover': { boxShadow: 1 },
                     positon: 'relative',
                     borderColor: '#eeeeee',
+                    width: '100%',
                 }}
             >
-                <Link to={`/items/${cardData.id}`}>
-                    <CardMedia sx={{ height: 150 }} image={cardData.img} />
+                <Link to={`/items/${cardData.item_id}`}>
+                    <CardMedia
+                        component="img"
+                        sx={{ height: 150 }}
+                        image={cardData.image_url}
+                    />
                     <CardContent>
                         <Typography
                             noWrap
@@ -61,20 +75,6 @@ const CardItem = () => {
             </Card>
         </Box>
     );
-};
-
-const cardData = {
-    id: 3,
-    img: 'https://picsum.photos/800/450?random=1',
-    name: 'Revolutionizing software development with cutting-edge tools',
-    description:
-        'Our latest engineering tools are designed to streamline workflows and boost productivity. Discover how these innovations are transforming the software development landscape.',
-    price: '10.99',
-    quantity: 13,
-    store: {
-        name: 'Store name',
-        rating: 5,
-    },
 };
 
 export default CardItem;
