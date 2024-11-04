@@ -8,30 +8,13 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import FavoriteFab from './FavoriteFab';
+import type { IItem } from '../api/useGetItems';
 
 interface Props {
     cardData: IItem;
 }
 
-interface IItem {
-    item_id: number;
-    image_url?: string;
-    name: string;
-    description?: string;
-    price: number;
-    quantity: number;
-    store: IStore;
-}
-
-interface IStore {
-    store_id: number;
-    name: string;
-    rating: number;
-    logo_url: string;
-}
-
 const CardItem = ({ cardData }: Props) => {
-    console.log('hellooooo');
     return (
         <Box position={'relative'} width={275} height={275}>
             <FavoriteFab
