@@ -94,6 +94,9 @@ const Navbar = () => {
                                         xs: `url(${LogoImage})`,
                                         sm: `url(${Logo})`,
                                     },
+                                    minWidth: {
+                                        xs: '50px',
+                                    },
                                     maxHeight: '50px',
                                 }}
                                 alt="Etsify Logo"
