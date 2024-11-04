@@ -4,6 +4,19 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
+import {
+    Container,
+    Paper,
+    Typography,
+    Table,
+    TableBody,
+    TableRow,
+    TableCell,
+    Stack,
+    Button,
+    Avatar,
+} from '@mui/material';
+import { usePaymentCheckout } from '../api/usePaymentCheckout';
 
 type StatusKey =
     | 'succeeded'
@@ -47,6 +60,7 @@ export const CompletePage = () => {
 
     const [status, setStatus] = useState<StatusKey>('default');
     const [intentId, setIntentId] = useState<string | null>(null);
+    const { data: checkoutInfo } = usePaymentCheckout(intentId);
 
     useEffect(() => {
         if (!stripe) {
@@ -74,48 +88,114 @@ export const CompletePage = () => {
     const { icon: Icon, iconColor, text } = STATUS_CONTENT_MAP[status];
 
     return (
-        <div id="payment-status">
-            <div id="status-icon" style={{ backgroundColor: iconColor }}>
-                <Icon />
-            </div>
-            <h2 id="status-text">{text}</h2>
-
-            {intentId && (
-                <div id="details-table">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td className="TableLabel">id</td>
-                                <td id="intent-id" className="TableContent">
-                                    {intentId}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className="TableLabel">status</td>
-                                <td id="intent-status" className="TableContent">
-                                    {status}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            )}
-            <div className="flex flex-col">
-                {intentId && (
-                    <a
-                        href={`https://dashboard.stripe.com/payments/${intentId}`}
-                        id="view-details"
-                        rel="noopener noreferrer"
-                        target="_blank"
+        <Container maxWidth="sm" sx={{ mt: 4 }}>
+            <Paper elevation={3} sx={{ p: 4 }}>
+                <Stack spacing={3} alignItems="center">
+                    <Avatar
+                        sx={{
+                            bgcolor: iconColor,
+                            width: 56,
+                            height: 56,
+                        }}
                     >
-                        View details
-                        <OpenInNewOutlinedIcon style={{ paddingLeft: '5px' }} />
-                    </a>
-                )}
-                <a id="retry-button" href="/checkout">
-                    Test another
-                </a>
-            </div>
-        </div>
+                        <Icon sx={{ fontSize: 32, color: 'white' }} />
+                    </Avatar>
+
+                    <Typography variant="h4" component="h1" textAlign="center">
+                        {text}
+                    </Typography>
+
+                    {intentId && (
+                        <Table>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell
+                                        component="th"
+                                        sx={{
+                                            fontWeight: 'bold',
+                                            width: '30%',
+                                        }}
+                                    >
+                                        Payment ID
+                                    </TableCell>
+                                    <TableCell>{intentId}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell
+                                        component="th"
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        Status
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{ textTransform: 'capitalize' }}
+                                    >
+                                        {status}
+                                    </TableCell>
+                                </TableRow>
+                                {checkoutInfo && (
+                                    <>
+                                        <TableRow>
+                                            <TableCell
+                                                component="th"
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                Order ID
+                                            </TableCell>
+                                            <TableCell>
+                                                {checkoutInfo.order_id}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell
+                                                component="th"
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                Customer
+                                            </TableCell>
+                                            <TableCell>
+                                                {checkoutInfo.full_name}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell
+                                                component="th"
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                Total
+                                            </TableCell>
+                                            <TableCell>
+                                                ${checkoutInfo.total.toFixed(2)}
+                                            </TableCell>
+                                        </TableRow>
+                                    </>
+                                )}
+                            </TableBody>
+                        </Table>
+                    )}
+
+                    <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                        {intentId && (
+                            <Button
+                                variant="outlined"
+                                endIcon={<OpenInNewOutlinedIcon />}
+                                href={`https://dashboard.stripe.com/payments/${intentId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View details
+                            </Button>
+                        )}
+                        <Button
+                            variant="contained"
+                            href="/checkout"
+                            color="primary"
+                        >
+                            Test another
+                        </Button>
+                    </Stack>
+                </Stack>
+            </Paper>
+        </Container>
     );
 };
