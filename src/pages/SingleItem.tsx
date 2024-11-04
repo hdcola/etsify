@@ -23,6 +23,7 @@ interface IItem {
     price: number;
     quantity: number;
     store: IStore;
+    rating: number;
 }
 
 interface IStore {
@@ -157,14 +158,16 @@ const SingleItem = () => {
                             onClick={async () => {
                                 navigate(`/stores/${item.store.store_id}`);
                             }}
-                            
                         >
-                            <Typography fontSize={'0.9rem'}sx={{
-                                cursor: 'pointer',
-                                '&:hover': {
-                                    textDecoration: 'underline'
-                                }
-                            }}>
+                            <Typography
+                                fontSize={'0.9rem'}
+                                sx={{
+                                    cursor: 'pointer',
+                                    '&:hover': {
+                                        textDecoration: 'underline',
+                                    },
+                                }}
+                            >
                                 {item.store.name}
                             </Typography>
                             <Rating
@@ -195,7 +198,7 @@ const SingleItem = () => {
                         <Typography variant="h6">
                             {reviews.length} reviews
                         </Typography>
-                        <Rating name="read-only" value={5} readOnly />
+                        <Rating name="read-only" value={item.rating} readOnly />
                     </Stack>
 
                     {reviews.map((review, index) => {
