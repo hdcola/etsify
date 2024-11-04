@@ -63,7 +63,7 @@ export const CompletePage = () => {
 
     const [status, setStatus] = useState<StatusKey>('default');
     const [intentId, setIntentId] = useState<string | null>(null);
-    const { data: checkoutInfo, isLoading } = usePaymentCheckout(intentId);
+    const { data: checkoutInfo } = usePaymentCheckout(intentId);
     const { setCartCount } = useAppContext();
     const [isProcessing, setIsProcessing] = useState(true);
 
