@@ -46,8 +46,13 @@ function App() {
     const loader = 'auto';
 
     const [isInit, setIsInit] = useState<boolean>(false);
-    const [server, setServer] = useState<IServer>({});
+    const [server, setServer] = useState<IServer>({
+        isLoggedIn: false,
+        apiUrl: '',
+        authToken: '',
+    } as IServer);
     const [cartCount, setCartCount] = useState<number>(0);
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
     const { authToken, logout, isLoggedIn } = useLoginStore();
 
@@ -58,7 +63,9 @@ function App() {
                 if (typeof error === 'object' && error && 'status' in error) {
                     if (error.status === 403) {
                         console.log('<< Unauthorized >>');
-                        logout();
+                        if (isLoggedIn) {
+                            logout();
+                        }
                     }
                 }
             },
@@ -67,14 +74,13 @@ function App() {
 
     // Setup server
     useLayoutEffect(() => {
-        if (isLoggedIn) {
-            setServer({
-                apiUrl: import.meta.env.VITE_API_URL,
-                authToken: authToken,
-            });
-        } else {
+        setServer({
+            apiUrl: import.meta.env.VITE_API_URL,
+            authToken: authToken,
+            isLoggedIn: isLoggedIn || false,
+        });
+        if (!isLoggedIn) {
             setCartCount(0);
-            setServer({ apiUrl: server.apiUrl });
         }
         setIsInit(true);
     }, [isLoggedIn]);
@@ -84,7 +90,14 @@ function App() {
             <CssBaseline />
             <Container sx={{ height: '100%' }} disableGutters={lessThanXL}>
                 <AppContext.Provider
-                    value={{ isInit, server, cartCount, setCartCount }}
+                    value={{
+                        isInit,
+                        server,
+                        cartCount,
+                        setCartCount,
+                        searchQuery,
+                        setSearchQuery,
+                    }}
                 >
                     <QueryClientProvider client={queryClient}>
                         <Router>
@@ -143,8 +156,9 @@ function App() {
 }
 
 interface IServer {
-    apiUrl?: string;
-    authToken?: string;
+    apiUrl: string;
+    authToken: string;
+    isLoggedIn: boolean;
 }
 
 export default App;

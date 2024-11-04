@@ -52,6 +52,7 @@ const CartItem = ({ refreshCart, removeItem, itemData }: Props) => {
         <Card key={item.item_id} sx={{ padding: 2 }} variant="outlined">
             <Typography display={'inline-flex'} component="div" mb={1}>
                 <Avatar
+                    src={item.store.logo_url || ''}
                     children="SN"
                     sx={{
                         width: 30,

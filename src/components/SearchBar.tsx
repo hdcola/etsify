@@ -29,7 +29,7 @@ const SearchBar = ({ setSearchQuery }: Props) => {
         event.preventDefault();
         console.log(searchString);
         setSearchQuery(searchString);
-        setSearchString('');
+        //setSearchString('');
     };
 
     return (

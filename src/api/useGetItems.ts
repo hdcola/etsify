@@ -19,20 +19,16 @@ interface IStore {
     logo_url: string;
 }
 
-const fetchItems = async () => {
+const fetchItems = async (searchQuery: string) => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const { authToken } = useLoginStore.getState();
 
-    /* return axios.get(`${server.apiUrl}/api/items`, {
-        headers: { Authorization: `Bearer ${server.authToken}` },
-    }).then((res) => {
-        return { items: res.data as IItem[] };
-    }).catch((err) => {
-        throw new Error('Failed to fetch items');
-    }); */
+    let url = `${apiUrl}/api/items`;
+    if (searchQuery !== '') {
+        url += `?query=${searchQuery}`
+    }
 
-
-    const res = await axios.get(`${apiUrl}/api/items`, {
+    const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${authToken}` },
     });
     if (res.status === 200) {
@@ -41,10 +37,10 @@ const fetchItems = async () => {
     throw new Error('Failed to fetch cart items');
 }
 
-const useGetItems = (enabled: boolean) => {
+const useGetItems = (enabled: boolean, searchQuery: string) => {
     return useQuery({
         queryKey: ['getItems'],
-        queryFn: fetchItems,
+        queryFn: () => fetchItems(searchQuery || ''),
         enabled
     })
 }
