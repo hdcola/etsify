@@ -144,7 +144,15 @@ const SingleItem = () => {
                         >
                             CA${item.price}
                         </Typography>
-                        <Typography variant="body1" my={2}>
+                        <Typography
+                            variant="body1"
+                            my={2}
+                            noWrap
+                            sx={{
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden',
+                            }}
+                        >
                             {item.name}
                         </Typography>
                         <Typography variant="body2">

@@ -65,11 +65,15 @@ const CartItem = ({ refreshCart, removeItem, itemData }: Props) => {
                     {item.store.name}
                 </Typography>
             </Link>
-            <Stack spacing={2} direction="row">
+            <Stack spacing={2} direction="row" width={'100%'}>
                 <Link to={`/items/${item.item_id}`}>
                     <CardMedia
                         component="img"
                         sx={{
+                            minWidth: {
+                                xs: 100,
+                                md: 150,
+                            },
                             height: {
                                 xs: 100,
                                 md: 150,
@@ -79,10 +83,16 @@ const CartItem = ({ refreshCart, removeItem, itemData }: Props) => {
                         image={item.image_url}
                     />
                 </Link>
-                <Stack flexGrow={1} spacing={2} rowGap={1} px={1}>
+                <Stack
+                    flexGrow={1}
+                    spacing={2}
+                    rowGap={1}
+                    px={1}
+                    sx={{ width: '50%' }}
+                >
                     <Box
                         sx={{
-                            width: '100%',
+                            width: '50%',
                         }}
                     >
                         <Link to={`/items/${item.item_id}`}>
@@ -97,7 +107,7 @@ const CartItem = ({ refreshCart, removeItem, itemData }: Props) => {
                             </Typography>
                         </Link>
                     </Box>
-                    <Stack textAlign={'right'} mt={3}>
+                    <Stack textAlign={'right'} mt={3} width={'100%'}>
                         <Typography fontWeight={'bold'} fontSize={'1.2rem'}>
                             CA${(item.price * quantity).toFixed(2)}
                         </Typography>
