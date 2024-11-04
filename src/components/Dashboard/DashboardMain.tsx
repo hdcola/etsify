@@ -151,12 +151,13 @@ export default function DashboardMain() {
                 <>
                     {store ? (
                         <>
-                            <Card sx={{ display: 'flex', maxWidth: 600 }}>
+                            <Card sx={{ display: 'flex', maxWidth: 600, maxHeight: 400, p: 2 }}>
                                 <Stack direction="row" spacing={2}>
                                     <CardMedia
                                         component="img"
                                         image={store.logo_url || defaultLogoUrl}
                                         alt=""
+                                        sx={{ display: 'flex', maxWidth: 400, maxHeight: 300 }}
                                     />
                                 </Stack>
 
