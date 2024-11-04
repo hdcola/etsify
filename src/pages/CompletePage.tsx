@@ -14,9 +14,9 @@ import {
     TableCell,
     Stack,
     Button,
-    Box,
     Avatar,
 } from '@mui/material';
+import { usePaymentCheckout } from '../api/usePaymentCheckout';
 
 type StatusKey =
     | 'succeeded'
@@ -60,6 +60,7 @@ export const CompletePage = () => {
 
     const [status, setStatus] = useState<StatusKey>('default');
     const [intentId, setIntentId] = useState<string | null>(null);
+    const { data: checkoutInfo } = usePaymentCheckout(intentId);
 
     useEffect(() => {
         if (!stripe) {
@@ -115,7 +116,7 @@ export const CompletePage = () => {
                                             width: '30%',
                                         }}
                                     >
-                                        ID
+                                        Payment ID
                                     </TableCell>
                                     <TableCell>{intentId}</TableCell>
                                 </TableRow>
@@ -132,6 +133,43 @@ export const CompletePage = () => {
                                         {status}
                                     </TableCell>
                                 </TableRow>
+                                {checkoutInfo && (
+                                    <>
+                                        <TableRow>
+                                            <TableCell
+                                                component="th"
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                Order ID
+                                            </TableCell>
+                                            <TableCell>
+                                                {checkoutInfo.order_id}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell
+                                                component="th"
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                Customer
+                                            </TableCell>
+                                            <TableCell>
+                                                {checkoutInfo.full_name}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell
+                                                component="th"
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                Total
+                                            </TableCell>
+                                            <TableCell>
+                                                ${checkoutInfo.total.toFixed(2)}
+                                            </TableCell>
+                                        </TableRow>
+                                    </>
+                                )}
                             </TableBody>
                         </Table>
                     )}
