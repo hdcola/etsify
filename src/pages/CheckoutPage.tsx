@@ -9,8 +9,6 @@ import { CartItemList } from '../components/CartItemList';
 
 export const CheckoutPage = () => {
     const { data: { items: cartItem, checkout } = {} } = useGetCartItems(true);
-    console.log(cartItem);
-    console.log(checkout);
 
     const items = cartItem
         ? cartItem.map((item) => {
