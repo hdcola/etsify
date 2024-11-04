@@ -50,19 +50,21 @@ const CartItem = ({ refreshCart, removeItem, itemData }: Props) => {
 
     return (
         <Card key={item.item_id} sx={{ padding: 2 }} variant="outlined">
-            <Typography display={'inline-flex'} component="div" mb={1}>
-                <Avatar
-                    src={item.store.logo_url || ''}
-                    children="SN"
-                    sx={{
-                        width: 30,
-                        height: 30,
-                        marginInlineEnd: 2,
-                    }}
-                    variant="rounded"
-                />
-                {item.store.name}
-            </Typography>
+            <Link to={`/stores/${item.store.store_id}`}>
+                <Typography display={'inline-flex'} component="div" mb={1}>
+                    <Avatar
+                        src={item.store.logo_url || ''}
+                        children="SN"
+                        sx={{
+                            width: 30,
+                            height: 30,
+                            marginInlineEnd: 2,
+                        }}
+                        variant="rounded"
+                    />
+                    {item.store.name}
+                </Typography>
+            </Link>
             <Stack spacing={2} direction="row">
                 <Link to={`/items/${item.item_id}`}>
                     <CardMedia
