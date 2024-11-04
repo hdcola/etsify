@@ -9,19 +9,29 @@ import {
 import { Link } from 'react-router-dom';
 import FavoriteFab from './FavoriteFab';
 import type { IItem } from '../api/useGetItems';
+import { useState } from 'react';
 
 interface Props {
     cardData: IItem;
 }
 
 const CardItem = ({ cardData }: Props) => {
+    const [showFab, setShowFab] = useState<boolean>(false);
+
     return (
-        <Box position={'relative'} height={275}>
-            <FavoriteFab
-                itemId={cardData.item_id}
-                favorite={true}
-                size="small"
-            />
+        <Box
+            position={'relative'}
+            height={275}
+            onMouseOver={() => setShowFab(true)}
+            onMouseOut={() => setShowFab(false)}
+        >
+            {showFab && (
+                <FavoriteFab
+                    itemId={cardData.item_id}
+                    favorite={true}
+                    size="small"
+                />
+            )}
             <Card
                 variant="outlined"
                 sx={{
