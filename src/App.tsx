@@ -21,6 +21,7 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { CompletePage } from './pages/CompletePage';
 import { CreateStore } from './pages/CreateStore';
 import { StoreDashboard } from './pages/StoreDashboard';
+import { StorePage } from './pages/StorePage';
 import { Elements } from '@stripe/react-stripe-js';
 import { TestPage } from './pages/TestPage';
 import { AccountSetting } from './pages/AccountSetting';
@@ -127,6 +128,9 @@ function App() {
                                     <Route
                                         path="/test"
                                         element={<TestPage />}
+                                    /><Route
+                                        path="/stores/:id"
+                                        element={<StorePage />}
                                     />
                                 </Routes>
                             </Elements>
