@@ -141,7 +141,7 @@ const Navbar = () => {
                                             src={picture}
                                         ></Avatar>
                                     ) : (
-                                        <Avatar>{username}</Avatar>
+                                        <Avatar>{username.charAt(0)}</Avatar>
                                     )}
                                 </IconButton>
                             ) : (
