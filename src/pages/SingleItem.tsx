@@ -154,8 +154,17 @@ const SingleItem = () => {
                             direction="row"
                             my={2}
                             alignItems={'center'}
+                            onClick={async () => {
+                                navigate(`/stores/${item.store.store_id}`);
+                            }}
+                            
                         >
-                            <Typography fontSize={'0.9rem'}>
+                            <Typography fontSize={'0.9rem'}sx={{
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    textDecoration: 'underline'
+                                }
+                            }}>
                                 {item.store.name}
                             </Typography>
                             <Rating
