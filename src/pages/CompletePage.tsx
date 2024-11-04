@@ -3,7 +3,6 @@ import { useStripe } from '@stripe/react-stripe-js';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
 import {
     Container,
     Paper,
@@ -19,7 +18,6 @@ import {
 } from '@mui/material';
 import { usePaymentCheckout } from '../api/usePaymentCheckout';
 import { useAppContext } from '../App';
-import { set } from 'react-hook-form';
 
 type StatusKey =
     | 'succeeded'
