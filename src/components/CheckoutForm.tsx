@@ -4,6 +4,15 @@ import {
     useStripe,
     useElements,
 } from '@stripe/react-stripe-js';
+import {
+    Box,
+    Button,
+    Stack,
+    Alert,
+    Typography,
+    CircularProgress,
+    Paper,
+} from '@mui/material';
 
 export const CheckoutForm = () => {
     const stripe = useStripe();
@@ -51,27 +60,46 @@ export const CheckoutForm = () => {
     };
 
     return (
-        <>
+        <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
             <form id="payment-form" onSubmit={handleSubmit}>
-                <PaymentElement
-                    id="payment-element"
-                    options={paymentElementOptions}
-                />
-                <button
-                    disabled={isLoading || !stripe || !elements}
-                    id="submit"
-                >
-                    <span id="button-text">
+                <Stack spacing={3}>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                        Payment Details
+                    </Typography>
+
+                    <Box sx={{ mb: 2 }}>
+                        <PaymentElement
+                            id="payment-element"
+                            options={paymentElementOptions}
+                        />
+                    </Box>
+
+                    <Button
+                        variant="contained"
+                        size="large"
+                        disabled={isLoading || !stripe || !elements}
+                        type="submit"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                    >
                         {isLoading ? (
-                            <div className="spinner" id="spinner"></div>
+                            <CircularProgress size={24} color="inherit" />
                         ) : (
                             'Pay now'
                         )}
-                    </span>
-                </button>
-                {/* Show any error or success messages */}
-                {message && <div id="payment-message">{message}</div>}
+                    </Button>
+
+                    {message && (
+                        <Alert
+                            severity={
+                                message.includes('error') ? 'error' : 'info'
+                            }
+                        >
+                            {message}
+                        </Alert>
+                    )}
+                </Stack>
             </form>
-        </>
+        </Paper>
     );
 };
