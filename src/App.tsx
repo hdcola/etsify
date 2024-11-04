@@ -52,6 +52,7 @@ function App() {
         authToken: '',
     } as IServer);
     const [cartCount, setCartCount] = useState<number>(0);
+    const [searchQuery, setSearchQuery] = useState<string>('');
 
     const { authToken, logout, isLoggedIn } = useLoginStore();
 
@@ -89,7 +90,14 @@ function App() {
             <CssBaseline />
             <Container sx={{ height: '100%' }} disableGutters={lessThanXL}>
                 <AppContext.Provider
-                    value={{ isInit, server, cartCount, setCartCount }}
+                    value={{
+                        isInit,
+                        server,
+                        cartCount,
+                        setCartCount,
+                        searchQuery,
+                        setSearchQuery,
+                    }}
                 >
                     <QueryClientProvider client={queryClient}>
                         <Router>

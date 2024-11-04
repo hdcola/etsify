@@ -33,8 +33,7 @@ import { useAppContext } from '../App';
 import useCartCount from '../hooks/useCartCount';
 
 const Navbar = () => {
-    const { cartCount } = useAppContext();
-    const [searchQuery, setSearchQuery] = useState<string>('');
+    const { cartCount, setSearchQuery } = useAppContext();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const { isLoggedIn, logout, username, picture } = useLoginStore();
@@ -64,8 +63,6 @@ const Navbar = () => {
 
     return (
         <>
-            {/* TODO: Workaround until actual functionality is plugged in. */}
-            {<div hidden>{searchQuery}</div>}
             <AppBar
                 position="sticky"
                 elevation={0}
@@ -84,7 +81,7 @@ const Navbar = () => {
                             backdropFilter: 'blur(24px)',
                         }}
                     >
-                        <Link to="/">
+                        <Link to="/" onClick={() => setSearchQuery('')}>
                             <Box
                                 component="img"
                                 mt={{ xs: 0, md: -1 }}
