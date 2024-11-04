@@ -49,8 +49,12 @@ export default function ManageItems() {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [error, setError] = useState<{ [key: string]: string | null }>({});
-    useEffect(() => {
-        const fetchItemsData = async () => {
+    const [open, setOpen] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
+const fetchItemsData = async () => {
             try {
                 const response = await axios.get(`${apiUrl}/api/stores/items`, {
                     headers: {
@@ -64,21 +68,87 @@ export default function ManageItems() {
                 console.error('Error fetching store data', err);
             }
         };
+    useEffect(() => {
+        
         fetchItemsData();
     }, [apiUrl, authToken]);
-
-    const [open, setOpen] = useState(false);
     const openCreateItemDialog = () => {
-        setSuccess('');
-        setError({});
+        resetForm();
         setOpen(true);
     };
 
     const closeCreateItemDialog = () => {
+        resetForm();
         setOpen(false);
     };
-    const handleEdit = () => {}; // TODO: handleEdit
-    const handleDelete = () => {}; // TODO: handleDelete
+    const handleEdit = (item: Item) => {
+        setItemToEdit(item);
+        setFormValues({
+            name: item.name,
+            description: item.description,
+            image_url: item.image_url,
+            quantity: item.quantity,
+            price: item.price,
+        });
+        setIsEditMode(true);
+        setOpen(true);
+    };
+
+
+    const openDeleteDialog = (item: Item) => {
+        setItemToDelete(item);
+        setDeleteDialogOpen(true);
+    };
+
+    const closeDeleteDialog = () => {
+        setDeleteDialogOpen(false);
+        setItemToDelete(null);
+    };
+
+    const handleDelete = async () => {
+        if (itemToDelete) {
+            try {
+                await axios.delete(
+                    `${apiUrl}/api/stores/items/${itemToDelete.item_id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${authToken}`,
+                        },
+                    }
+                );
+                setItems((prevItems) =>
+                    prevItems.filter(
+                        (item) => item.item_id !== itemToDelete.item_id
+                    )
+                );
+                setSuccess('Item deleted successfully!');
+            } catch (err) {
+                console.error('Error deleting item', err);
+                setError({
+                    general: 'An error occurred while deleting the item.',
+                });
+            } finally {
+                closeDeleteDialog();
+            }
+        }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+        setFormValues((prev) => ({
+            ...prev,
+            [name]:
+                (name === 'price' || name === 'quantity') && value === ''
+                    ? 0
+                    : value,
+        }));
+
+        setError((prev) => ({
+            ...prev,
+            [name]: null,
+        }));
+    };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -92,6 +162,7 @@ export default function ManageItems() {
             if (imageFile) {
                 formData.append('file', imageFile);
             }
+
             const uploadResponse = imageFile
                 ? await axios.post(`${apiUrl}/api/files/upload`, formData, {
                       headers: {
@@ -103,26 +174,55 @@ export default function ManageItems() {
 
             const imageUrl = uploadResponse ? uploadResponse.data.url : null;
 
-            await axios.post(
-                `${apiUrl}/api/stores/items`,
-                {
-                    name: formValues.name,
-                    description: formValues.description,
-                    image_url: imageUrl,
-                    price: formValues.price,
-                    quantity: formValues.quantity,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${authToken}`,
+            if (isEditMode && itemToEdit) {
+                // Update existing item
+                await axios.put(
+                    `${apiUrl}/api/stores/items/${itemToEdit.item_id}`,
+                    {
+                        name: formValues.name,
+                        description: formValues.description,
+                        image_url: imageUrl,
+                        price: formValues.price,
+                        quantity: formValues.quantity,
                     },
-                }
-            );
+                    {
+                        headers: {
+                            Authorization: `Bearer ${authToken}`,
+                        },
+                    }
+                );
 
-            setSuccess('Item created successfully! Close the window');
+                setItems((prevItems) =>
+                    prevItems.map((item) =>
+                        item.item_id === itemToEdit.item_id
+                            ? { ...item, ...formValues, image_url: imageUrl || item.image_url}
+                            : item
+                    )
+                );
+
+                setSuccess('Item updated successfully!');
+            } else {
+                // Create new item
+                await axios.post(
+                    `${apiUrl}/api/stores/items`,
+                    {
+                    ...formValues,
+                    image_url: imageUrl,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${authToken}`,
+                        },
+                    }
+                );
+                resetForm();
+                setSuccess('Item created successfully! Close the window');
+                fetchItemsData();
+            }
+
             setError({});
         } catch (err) {
-            let messageError = 'An error occurred while creating an item.';
+            let messageError = 'An error occurred while saving the item.';
             if (axios.isAxiosError(err)) {
                 messageError =
                     err.response?.data?.message || 'An error occurred.';
@@ -135,20 +235,23 @@ export default function ManageItems() {
                 return;
             }
             setError({ general: messageError });
+        } finally {
+            closeCreateItemDialog();
+            setIsEditMode(false);
+            setItemToEdit(null);
         }
     };
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-    
-        setFormValues((prev) => ({
-            ...prev,
-            [name]: (name === 'price' || name === 'quantity') && value === '' ? 0 : value,
-        }));
-    
-        setError((prev) => ({
-            ...prev,
-            [name]: null,
-        }));
+    const resetForm = () => {
+        setFormValues({
+            name: '',
+            description: '',
+            image_url: '',
+            quantity: 0,
+            price: 0,
+        });
+        setImageFile(null);
+        setSuccess(null);
+        setError({});
     };
 
     return (
@@ -167,6 +270,7 @@ export default function ManageItems() {
                         <Button
                             variant='contained'
                             size='medium'
+                            id='create'
                             onClick={openCreateItemDialog}
                         >
                             Create an item <AddBoxIcon sx={{ ml: 1 }} />
@@ -206,12 +310,19 @@ export default function ManageItems() {
                                                     aria-label='Small button group'
                                                 >
                                                     <Button
-                                                        onClick={handleEdit}
+                                                        id='edit'
+                                                        onClick={() =>
+                                                            handleEdit(item)
+                                                        }
                                                     >
                                                         Edit
                                                     </Button>
                                                     <Button
-                                                        onClick={handleDelete}
+                                                        onClick={() =>
+                                                            openDeleteDialog(
+                                                                item
+                                                            )
+                                                        }
                                                     >
                                                         Delete
                                                     </Button>
@@ -233,7 +344,9 @@ export default function ManageItems() {
                             onSubmit: handleSubmit,
                         }}
                     >
-                        <DialogTitle>Create an item</DialogTitle>
+                        <DialogTitle>
+                            {isEditMode ? 'Edit item' : 'Create an item'}
+                        </DialogTitle>
                         <DialogContent>
                             {error.general && (
                                 <Typography color='error'>
@@ -332,6 +445,20 @@ export default function ManageItems() {
                             </Button>
                             <Button variant='contained' type='submit'>
                                 Save
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
+                        <DialogTitle>Delete Item</DialogTitle>
+                        <DialogContent>
+                            <Typography>
+                                Are you sure you want to delete this item?
+                            </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={closeDeleteDialog}>Cancel</Button>
+                            <Button onClick={handleDelete} color='error'>
+                                Delete
                             </Button>
                         </DialogActions>
                     </Dialog>
