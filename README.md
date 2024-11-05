@@ -1,5 +1,8 @@
 # Etsify Web
 
+Demo site: https://etsify.hdcola.org
+
+
 ## Development
 
 ### Setup
